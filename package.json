@@ -1,0 +1,13 @@
+{
+  "name": "kitchen-radio-app",
+  "version": "0.0.1",
+  "main": "src/main.js",
+  "dependencies": {
+    "tabris": "0.9.3",
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0"
+  }
+}
