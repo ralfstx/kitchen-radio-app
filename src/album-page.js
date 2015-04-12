@@ -2,7 +2,7 @@ var _ = require("underscore");
 var $ = require("./lib/jquery.min.js");
 var config = require("./config");
 
-exports.createAlbumPage = function(album) {
+exports.create = function(album) {
 
   var page = tabris.create("Page", {
     title: album.name

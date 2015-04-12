@@ -1,9 +1,9 @@
 var $ = require("./lib/jquery.min.js");
 var config = require("./config");
 
-require("./player.js").createPage().open();
-require("./stations.js").createPage();
-require("./albums.js").createPage();
+require("./player-page.js").create().open();
+require("./stations-page.js").create();
+require("./albums-page.js").create();
 
 tabris.create("Action", {
   "title": "Stop"

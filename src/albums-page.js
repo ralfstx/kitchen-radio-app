@@ -1,9 +1,9 @@
 var _ = require("underscore");
 var $ = require("./lib/jquery.min.js");
 var config = require("./config");
-var AlbumPage = require("./album");
+var AlbumPage = require("./album-page");
 
-exports.createPage = function() {
+exports.create = function() {
 
   var page = tabris.create("Page", {
     title: "Collection",
@@ -33,7 +33,7 @@ exports.createPage = function() {
       });
     }
   }).on("selection", function(event) {
-    AlbumPage.createAlbumPage(event.item).open();
+    AlbumPage.create(event.item).open();
   }).appendTo(page);
 
   var albums;

@@ -1,7 +1,7 @@
 var $ = require("./lib/jquery.min.js");
 var config = require("./config");
 
-exports.createPage = function() {
+exports.create = function() {
 
   var page = tabris.create("Page", {
     title: "Player",
