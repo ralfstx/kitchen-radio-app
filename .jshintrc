@@ -24,9 +24,19 @@
   "node": true, // globals exposed by Node.js
   "globals": {
     "tabris": false,
+
+    // modules
     "module": false,
     "exports": false,
     "require": false,
-    "Promise": true
+
+    // jasmine
+    "jasmine": false,
+    "describe": false,
+    "it": false,
+    "expect": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "spyOn": false
   }
 }
