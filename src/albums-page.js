@@ -32,8 +32,8 @@ exports.create = function() {
         nameView.set("text", album.name);
       });
     }
-  }).on("selection", function(event) {
-    AlbumPage.create(event.item).open();
+  }).on("select", function(widget, item) {
+    AlbumPage.create(item).open();
   }).appendTo(page);
 
   var albums;

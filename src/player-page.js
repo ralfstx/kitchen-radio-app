@@ -19,7 +19,7 @@ exports.create = function() {
     var button = tabris.create("Button", {
       layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
       text: cmd
-    }).on("selection", function() {
+    }).on("select", function() {
       $.getJSON(config.server + "/" + cmd);
     });
     lastButton = button;
@@ -29,7 +29,7 @@ exports.create = function() {
   tabris.create("Button", {
     layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
     text: "refresh"
-  }).on("selection", function() {
+  }).on("select", function() {
     updateStatus();
   }).appendTo(page);
 

@@ -7,7 +7,7 @@ require("./albums-page.js").create();
 
 tabris.create("Action", {
   "title": "Stop"
-}).on("selection", function() {
+}).on("select", function() {
   $.get(config.server + "/stop");
 });
 

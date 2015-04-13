@@ -43,8 +43,7 @@ exports.create = function(album) {
         timeView.set("text", formatLength(item.length));
       });
     }
-  }).on("selection", function(event) {
-    var item = event.item;
+  }).on("select", function(widget, item) {
     if (item.type === "track") {
       play([item]);
     } else {
@@ -54,7 +53,7 @@ exports.create = function(album) {
 
   var playButton = tabris.create("Button", {
     text: "play album",
-  }).on("selection", function() {
+  }).on("select", function() {
     play(getTracks());
   }).appendTo(page);
 
@@ -118,7 +117,7 @@ exports.create = function(album) {
     var coverSize = Math.floor(bounds.width / 3);
     if (bounds.width > bounds.height) {
       // landscape
-      trackListView.set("layoutData", {left: 0, top: 0, bottom: 0, right: [66, 5]});
+      trackListView.set("layoutData", {left: 0, top: 0, bottom: 0, right: [33, 5]});
       playButton.set("layoutData", {right: 20, top: 20});
       coverView.set("layoutData", {right: 0, bottom: 0, width: coverSize, height: coverSize});
     } else {

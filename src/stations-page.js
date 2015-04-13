@@ -25,8 +25,8 @@ exports.create = function() {
         nameView.set("text", item.name);
       });
     }
-  }).on("selection", function(event) {
-    tuneIn(event.item);
+  }).on("select", function(widget, item) {
+    tuneIn(item);
   }).appendTo(page);
 
   $.getJSON(config.server + "/files/stations", function(stations) {
