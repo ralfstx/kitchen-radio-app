@@ -1,4 +1,6 @@
-var $ = require("./lib/jquery.min.js");
+/* globals fetch: false, Promise: true*/
+Promise = require("promise");
+require("whatwg-fetch");
 var config = require("./config");
 
 exports.create = function() {
@@ -29,7 +31,9 @@ exports.create = function() {
     tuneIn(item);
   }).appendTo(page);
 
-  $.getJSON(config.server + "/files/stations", function(stations) {
+  fetch(config.server + "/files/stations").then(function(response) {
+    return response.json();
+  }).then(function(stations) {
     showStations(stations);
   });
 
@@ -44,8 +48,7 @@ exports.create = function() {
   }
 
   function tuneIn(station) {
-    $.getJSON(config.server + "/play/" + station.stream, function() {
-    });
+    fetch(config.server + "/play/" + station.stream);
   }
 
   return page;

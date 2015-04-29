@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "main": "src/main.js",
   "dependencies": {
-    "tabris": "0.9.4",
+    "tabris": "1.0.0",
+    "promise": "^6.1.0",
+    "whatwg-fetch": "^0.7.0",
     "underscore": "^1.7.0"
   },
   "devDependencies": {

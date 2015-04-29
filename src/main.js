@@ -1,4 +1,6 @@
-var $ = require("./lib/jquery.min.js");
+/* globals fetch: false, Promise: true*/
+Promise = require("promise");
+require("whatwg-fetch");
 var config = require("./config");
 
 require("./player-page.js").create().open();
@@ -8,7 +10,7 @@ require("./albums-page.js").create();
 tabris.create("Action", {
   "title": "Stop"
 }).on("select", function() {
-  $.get(config.server + "/stop");
+  fetch(config.server + "/stop");
 });
 
 var drawer = tabris.create("Drawer");

@@ -1,5 +1,7 @@
+/* globals fetch: false, Promise: true*/
+Promise = require("promise");
+require("whatwg-fetch");
 var _ = require("underscore");
-var $ = require("./lib/jquery.min.js");
 var config = require("./config");
 var AlbumPage = require("./album-page");
 
@@ -38,7 +40,9 @@ exports.create = function() {
 
   var albums;
 
-  $.getJSON(config.server + "/files/albums", function(result) {
+  fetch(config.server + "/files/albums").then(function(reponse) {
+    return reponse.json();
+  }).then(function(result) {
     albums = result;
     showAlbums();
   });

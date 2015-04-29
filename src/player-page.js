@@ -1,4 +1,6 @@
-var $ = require("./lib/jquery.min.js");
+/* globals fetch: false, Promise: true*/
+Promise = require("promise");
+require("whatwg-fetch");
 var config = require("./config");
 
 exports.create = function() {
@@ -20,7 +22,7 @@ exports.create = function() {
       layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
       text: cmd
     }).on("select", function() {
-      $.getJSON(config.server + "/" + cmd);
+      fetch(config.server + "/" + cmd);
     });
     lastButton = button;
     return button;
@@ -70,7 +72,9 @@ exports.create = function() {
   updateStatus();
 
   function updateStatus() {
-    $.getJSON(config.server + "/status", function(status) {
+    fetch(config.server + "/status").then(function(response) {
+      return response.json();
+    }).then(function(status) {
       statusView.set("text", status.state);
       if (status.time) {
         var times = status.time.split(':');
@@ -91,7 +95,9 @@ exports.create = function() {
   }
 
   function updatePlaylist() {
-    $.getJSON(config.server + "/playlist", function(playlist) {
+    fetch(config.server + "/playlist").then(function(response) {
+      return response.json();
+    }).then(function(playlist) {
       playlistList.set("items", playlist.map(function(item, index) {
         return {
           name: item.Name || item.Title || index.toString(),

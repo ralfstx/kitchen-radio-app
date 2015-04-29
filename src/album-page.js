@@ -1,5 +1,7 @@
+/* globals fetch: false, Promise: true*/
+Promise = require("promise");
+require("whatwg-fetch");
 var _ = require("underscore");
-var $ = require("./lib/jquery.min.js");
 var config = require("./config");
 
 exports.create = function(album) {
@@ -57,7 +59,9 @@ exports.create = function(album) {
     play(getTracks());
   }).appendTo(page);
 
-  $.getJSON(config.server + "/files/albums/" + album.path + "/", function(result) {
+  fetch(config.server + "/files/albums/" + album.path + "/").then(function(response) {
+    return response.json();
+  }).then(function(result) {
     _.extend(album, result);
     update();
   });
@@ -69,8 +73,14 @@ exports.create = function(album) {
   }
 
   function play(tracks) {
-    var url = config.server + "/replace";
-    $.post(url, JSON.stringify(tracks.map(getTrackUrl)));
+    fetch(config.server + "/replace", {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(tracks.map(getTrackUrl))
+    });
   }
 
   function getCoverImage() {
