@@ -31,7 +31,7 @@ exports.create = function(album) {
         font: "15px sans-serif",
         alignment: "right"
       }).appendTo(cell);
-      cell.on("itemchange", function(item) {
+      cell.on("change:item", function(view, item) {
         if (item.type === "track") {
           numberView.set("text", item.number + ".");
           titleView.set("text", item.title || item.path);
@@ -109,7 +109,7 @@ exports.create = function(album) {
             track.number = index + 1;
             track.type = "track";
           });
-          items = items.concat(disc.tracks);
+          items = items.concat(disc.ttrackListViewracks);
         }
       });
     }

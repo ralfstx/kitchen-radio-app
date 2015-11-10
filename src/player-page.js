@@ -51,15 +51,15 @@ exports.create = function() {
     initializeCell: function(cell) {
       var nameView = tabris.create("TextView", {
         layoutData: {left: 10, right: 100, top: 5, bottom: 5},
-        foreground: "rgb(74, 74, 74)"
+        textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
       var timeView = tabris.create("TextView", {
         layoutData: {right: 10, top: 5, bottom: 5, width: 80},
-        foreground: "rgb(74, 74, 74)",
+        textColor: "rgb(74, 74, 74)",
         background: "yellow",
         alignment: "right"
       }).appendTo(cell);
-      cell.on("itemchange", function(item) {
+      cell.on("change:item", function(view, item) {
         nameView.set("text", item.name);
         timeView.set("text", item.time);
       });

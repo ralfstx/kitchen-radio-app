@@ -20,9 +20,9 @@ exports.create = function() {
       }).appendTo(cell);
       var nameView = tabris.create("TextView", {
         layoutData: {left: 130, right: 10, top: 5, bottom: 5},
-        foreground: "rgb(74, 74, 74)"
+        textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
-      cell.on("itemchange", function(item) {
+      cell.on("change:item", function(view, item) {
         iconView.set("image", item.icon);
         nameView.set("text", item.name);
       });

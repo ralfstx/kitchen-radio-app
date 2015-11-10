@@ -27,9 +27,9 @@ exports.create = function() {
       }).appendTo(cell);
       var nameView = tabris.create("TextView", {
         layoutData: {left: 80, right: 10, top: 5, bottom: 5},
-        foreground: "rgb(74, 74, 74)"
+        textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
-      cell.on("itemchange", function(album) {
+      cell.on("change:item", function(view, album) {
         iconView.set("image", getCoverImage(album));
         nameView.set("text", album.name);
       });
@@ -40,8 +40,8 @@ exports.create = function() {
 
   var albums;
 
-  fetch(config.server + "/files/albums").then(function(reponse) {
-    return reponse.json();
+  fetch(config.server + "/files/albums").then(function(response) {
+    return response.json();
   }).then(function(result) {
     albums = result;
     showAlbums();
