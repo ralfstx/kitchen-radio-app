@@ -9,4 +9,10 @@
   </author>
   <content src="www"/>
   <access origin="*"/>
+  <platform name="android">
+    <icon src="res/android/radio_48.png" density="mdpi" />
+    <icon src="res/android/radio_72.png" density="hdpi" />
+    <icon src="res/android/radio_96.png" density="xhdpi" />
+    <icon src="res/android/radio_144.png" density="xxhdpi" />
+  </platform>
 </widget>
