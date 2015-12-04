@@ -16,42 +16,53 @@ exports.create = function(album) {
 
   var trackListView = tabris.create("CollectionView", {
     itemHeight: 35,
-    initializeCell: function(cell) {
-      var numberView = tabris.create("TextView", {
-        layoutData: {left: 10, width: 30, top: 5, bottom: 5},
-        font: "15px sans-serif",
-        alignment: "right"
-      }).appendTo(cell);
-      var titleView = tabris.create("TextView", {
-        layoutData: {left: 45, right: 85, top: 5, bottom: 5},
-        font: "15px sans-serif"
-      }).appendTo(cell);
-      var timeView = tabris.create("TextView", {
-        layoutData: {right: 10, width: 70, top: 5, bottom: 5},
-        font: "15px sans-serif",
-        alignment: "right"
-      }).appendTo(cell);
-      cell.on("change:item", function(view, item) {
-        if (item.type === "track") {
-          numberView.set("text", item.number + ".");
-          titleView.set("text", item.title || item.path);
-          titleView.set("font", "15px sans-serif");
-        } else {
-          numberView.set("text", "");
-          var isMulti = item.album.discs.length > 1;
-          titleView.set("text", isMulti ? "Disc " + item.number : "");
-          titleView.set("font", "bold 18px sans-serif");
-        }
-        timeView.set("text", formatLength(item.length));
-      });
-    }
-  }).on("select", function(widget, item) {
-    if (item.type === "track") {
-      play([item]);
-    } else {
-      play(item.tracks);
+    cellType: function(item) {
+      console.log("item", item, item && item.type);
+      return item.type === "track" ? "track" : "section";
+    },
+    initializeCell: function(cell, type) {
+      console.log("init", type);
+      return type === "track" ? createTrackCell(cell) : createSectionCell(cell);
     }
   }).appendTo(page);
+
+  function createTrackCell(parent) {
+    var numberView = tabris.create("TextView", {
+      left: 10, width: 30, top: 5, bottom: 5,
+      font: "15px sans-serif",
+      alignment: "right"
+    }).appendTo(parent);
+    var titleView = tabris.create("TextView", {
+      left: 45, right: 85, top: 5, bottom: 5,
+      font: "15px sans-serif"
+    }).appendTo(parent);
+    var timeView = tabris.create("TextView", {
+      right: 10, width: 70, top: 5, bottom: 5,
+      font: "15px sans-serif",
+      alignment: "right"
+    }).appendTo(parent);
+    parent.on("change:item", function(view, track) {
+      numberView.set("text", track.number + ".");
+      titleView.set("text", track.title || track.path);
+      timeView.set("text", formatLength(track.length));
+    }).on("swipe:left", function() {
+      var track = parent.get("item");
+      play([track]);
+    }).on("swipe:right", function() {
+      var track = parent.get("item");
+      append([track]);
+    });
+  }
+
+  function createSectionCell(parent) {
+    var textView = tabris.create("TextView", {
+      left: 45, right: 85, top: 5, bottom: 5,
+      font: "bold 18px sans-serif"
+    }).appendTo(parent);
+    parent.on("change:item", function(view, disc) {
+      textView.set("text", "Disc " + disc.number);
+    });
+  }
 
   var playButton = tabris.create("Button", {
     text: "play album",
@@ -74,6 +85,17 @@ exports.create = function(album) {
 
   function play(tracks) {
     fetch(config.server + "/replace", {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(tracks.map(getTrackUrl))
+    });
+  }
+
+  function append(tracks) {
+    fetch(config.server + "/append", {
       method: 'post',
       headers: {
         'Accept': 'application/json',
@@ -109,7 +131,7 @@ exports.create = function(album) {
             track.number = index + 1;
             track.type = "track";
           });
-          items = items.concat(disc.ttrackListViewracks);
+          items = items.concat(disc.tracks);
         }
       });
     }
