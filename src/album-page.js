@@ -10,28 +10,45 @@ exports.create = function(album) {
     title: album.name
   }).on("change:bounds", layout);
 
-  var coverView = tabris.create("ImageView", {
-    scaleMode: "fill"
-  }).appendTo(page);
-
   var trackListView = tabris.create("CollectionView", {
-    itemHeight: 35,
+    itemHeight: function(item) {
+      if (item.type === "album") {
+        return 500;
+      } else {
+        return 50;
+      }
+    },
     cellType: function(item) {
-      console.log("item", item, item && item.type);
-      return item.type === "track" ? "track" : "section";
+      return item.type;
     },
     initializeCell: function(cell, type) {
-      console.log("init", type);
-      return type === "track" ? createTrackCell(cell) : createSectionCell(cell);
+      if (type === "album") {
+        return createAlbumCell(cell);
+      } else if (type === "track") {
+        return createTrackCell(cell);
+      } else {
+        return createSectionCell(cell);
+      }
     }
   }).appendTo(page);
 
-  function createTrackCell(parent) {
-    var numberView = tabris.create("TextView", {
-      left: 10, width: 30, top: 5, bottom: 5,
-      font: "15px sans-serif",
-      alignment: "right"
+  function createAlbumCell(parent) {
+    var coverView = tabris.create("ImageView", {
+      left: 0, right: 0, top: 0, bottom: 0,
+      scaleMode: "fit"
     }).appendTo(parent);
+    tabris.create("Button", {
+      right: 50, bottom: 50,
+      text: "play",
+    }).on("select", function() {
+      play(getTracks());
+    }).appendTo(parent);
+    parent.on("change:item", function() {
+      coverView.set("image", getCoverImage());
+    });
+  }
+
+  function createTrackCell(parent) {
     var titleView = tabris.create("TextView", {
       left: 45, right: 85, top: 5, bottom: 5,
       font: "15px sans-serif"
@@ -42,7 +59,6 @@ exports.create = function(album) {
       alignment: "right"
     }).appendTo(parent);
     parent.on("change:item", function(view, track) {
-      numberView.set("text", track.number + ".");
       titleView.set("text", track.title || track.path);
       timeView.set("text", formatLength(track.length));
     }).on("swipe:left", function() {
@@ -64,12 +80,6 @@ exports.create = function(album) {
     });
   }
 
-  var playButton = tabris.create("Button", {
-    text: "play album",
-  }).on("select", function() {
-    play(getTracks());
-  }).appendTo(page);
-
   fetch(config.server + "/files/albums/" + album.path + "/").then(function(response) {
     return response.json();
   }).then(function(result) {
@@ -79,7 +89,6 @@ exports.create = function(album) {
 
   function update() {
     page.set("title", album.name || "unknown album");
-    coverView.set("image", getCoverImage());
     trackListView.set("items", getItems());
   }
 
@@ -111,29 +120,40 @@ exports.create = function(album) {
 
   function getTrackUrl(track) {
     function notEmpty(value) { return !!value; }
-    var parts = [album.path, track.disc && track.disc !== track.album ? track.disc.path : "", track.path];
+    var parts = [album.path, track.disc ? track.disc.path : "", track.path];
     return config.server + "/files/albums/" + parts.filter(notEmpty).map(encodeURIComponent).join("/");
   }
 
   function getItems() {
     var items = [];
     if (album) {
-      album.discs = album.discs || [album];
-      album.discs.forEach(function(disc, index) {
-        disc.album = album;
-        disc.number = index + 1;
-        disc.type = "disc";
-        items.push(disc);
-        if (disc.tracks) {
-          disc.tracks.forEach(function(track, index) {
-            track.album = album;
-            track.disc = disc;
-            track.number = index + 1;
-            track.type = "track";
-          });
-          items = items.concat(disc.tracks);
-        }
-      });
+      album.type = "album";
+      items.push(album);
+      if ("discs" in album) {
+        album.discs.forEach(function(disc, index) {
+          disc.album = album;
+          disc.number = index + 1;
+          disc.type = "disc";
+          items.push(disc);
+          if ("tracks" in disc) {
+            disc.tracks.forEach(function(track, index) {
+              track.album = album;
+              track.disc = disc;
+              track.number = index + 1;
+              track.type = "track";
+              items.push(track);
+            });
+          }
+        });
+      }
+      if ("tracks" in album) {
+        album.tracks.forEach(function(track, index) {
+          track.album = album;
+          track.number = index + 1;
+          track.type = "track";
+          items.push(track);
+        });
+      }
     }
     return items;
   }
@@ -146,17 +166,12 @@ exports.create = function(album) {
 
   function layout() {
     var bounds = page.get("bounds");
-    var coverSize = Math.floor(bounds.width / 3);
     if (bounds.width > bounds.height) {
       // landscape
-      trackListView.set("layoutData", {left: 0, top: 0, bottom: 0, right: [33, 5]});
-      playButton.set("layoutData", {right: 20, top: 20});
-      coverView.set("layoutData", {right: 0, bottom: 0, width: coverSize, height: coverSize});
+      trackListView.set("layoutData", {left: 0, top: 0, bottom: 0, right: 0});
     } else {
        // portrait
-      coverView.set("layoutData", {left: 0, top: 0, width: coverSize, height: coverSize});
-      playButton.set("layoutData", {right: 20, top: 20});
-      trackListView.set("layoutData", {left: 0, top: coverSize, right: 0, bottom: 0});
+      trackListView.set("layoutData", {left: 0, top: 0, right: 0, bottom: 0});
     }
   }
 
