@@ -1,20 +1,16 @@
-import _ from "underscore";
-import config from "../config";
+import player from "../model/player";
 import { Page, Button, TextView, ImageView, CollectionView } from "tabris";
 
 export default class AlbumPage extends Page {
 
-  constructor(album) {
-    super({
-      title: album.name
-    });
-    this._album = album;
+  constructor() {
+    super();
     this.on("change:bounds", () => {
       this.layout();
     });
-
+    let coverSize = Math.min(screen.width, screen.height);
     this._trackListView = new CollectionView({
-      itemHeight: item => item.type === "album" ? 500 : 50,
+      itemHeight: item => item.type === "album" ? coverSize : 50,
       cellType: item => item.type,
       initializeCell: (cell, type) => {
         if (type === "album") {
@@ -26,15 +22,15 @@ export default class AlbumPage extends Page {
         }
       }
     }).appendTo(this);
-    this.load();
   }
 
-  load() {
-    let path = config.server + "/files/albums/" + this._album.path + "/";
-    fetch(path).then(rsp => rsp.json()).then(result => {
-      _.extend(this._album, result);
-      this.update();
-    });
+  set album(album) {
+    this._album = album;
+    this.update();
+  }
+
+  get album() {
+    return this._album || null;
   }
 
   update() {
@@ -55,122 +51,74 @@ export default class AlbumPage extends Page {
 
 }
 
-function createAlbumCell(parent) {
+function createAlbumCell(cell) {
   let coverView = new ImageView({
     left: 0, right: 0, top: 0, bottom: 0,
     scaleMode: "fit"
-  }).appendTo(parent);
+  }).appendTo(cell);
   new Button({
     right: 50, bottom: 50,
     text: "play",
-  }).on("select", (cell) => {
-    play(getTracks(cell.get("item")));
-  }).appendTo(parent);
-  parent.on("change:item", (cell, album) => {
+  }).on("select", () => {
+    let album = cell.get("item");
+    player.play(album.tracks);
+  }).appendTo(cell);
+  cell.on("change:item", (cell, album) => {
     coverView.set("image", getCoverImage(album));
   });
 }
 
-function createTrackCell(parent) {
+function createTrackCell(cell) {
   let titleView = new TextView({
     left: 45, right: 85, top: 5, bottom: 5,
     font: "15px sans-serif"
-  }).appendTo(parent);
+  }).appendTo(cell);
   let timeView = new TextView({
     right: 10, width: 70, top: 5, bottom: 5,
     font: "15px sans-serif",
     alignment: "right"
-  }).appendTo(parent);
-  parent.on("change:item", (view, track) => {
+  }).appendTo(cell);
+  cell.on("change:item", (cell, track) => {
     titleView.set("text", track.title || track.path);
     timeView.set("text", formatLength(track.length));
   }).on("swipe:left", () => {
-    let track = parent.get("item");
-    play([track]);
+    let track = cell.get("item");
+    player.play([track]);
   }).on("swipe:right", () => {
-    let track = parent.get("item");
-    append([track]);
+    let track = cell.get("item");
+    player.append([track]);
   });
 }
 
-function createSectionCell(parent) {
+function createSectionCell(cell) {
   let textView = new TextView({
     left: 45, right: 85, top: 5, bottom: 5,
     font: "bold 18px sans-serif"
-  }).appendTo(parent);
-  parent.on("change:item", (view, disc) => {
+  }).appendTo(cell);
+  cell.on("change:item", (view, disc) => {
     textView.set("text", "Disc " + disc.number);
   });
 }
 
-function play(tracks) {
-  fetch(config.server + "/replace", {
-    method: 'post',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(tracks.map(getTrackUrl))
-  });
-}
-
-function append(tracks) {
-  fetch(config.server + "/append", {
-    method: 'post',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(tracks.map(getTrackUrl))
-  });
-}
-
 function getCoverImage(album) {
-  return {src: config.server + "/files/albums/" + album.path + "/cover-250.jpg", width: 250, height: 250};
-}
-
-function getTrackUrl(track) {
-  let notEmpty = value => !!value;
-  let parts = [track.album.path, track.disc ? track.disc.path : "", track.path];
-  return config.server + "/files/albums/" + parts.filter(notEmpty).map(encodeURIComponent).join("/");
+  return {src: album.url + "/cover-250.jpg", width: 250, height: 250};
 }
 
 function getItems(album) {
   let items = [];
-  if (album) {
-    album.type = "album";
-    items.push(album);
-    if ("discs" in album) {
-      album.discs.forEach((disc, index) => {
-        disc.album = album;
-        disc.number = index + 1;
-        disc.type = "disc";
-        items.push(disc);
-        if ("tracks" in disc) {
-          disc.tracks.forEach((track, index) => {
-            track.album = album;
-            track.disc = disc;
-            track.number = index + 1;
-            track.type = "track";
-            items.push(track);
-          });
-        }
-      });
+  album.type = "album";
+  items.push(album);
+  album.discs.forEach(disc => {
+    if (album.discs.length > 1) {
+      disc.type = "disc";
+      items.push(disc);
     }
-    if ("tracks" in album) {
-      album.tracks.forEach((track, index) => {
-        track.album = album;
-        track.number = index + 1;
-        track.type = "track";
-        items.push(track);
-      });
-    }
-  }
+    disc.tracks.forEach(track => {
+      track.type = "track";
+      items.push(track);
+    });
+  });
   return items;
-}
-
-function getTracks(album) {
-  return getItems(album).filter(item => item.type === "track");
 }
 
 function formatLength(seconds) {

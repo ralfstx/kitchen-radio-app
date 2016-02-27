@@ -1,4 +1,5 @@
-import config from "../config";
+import player from "../model/player";
+import { loadStations } from "../model/server.js";
 import { Page, CollectionView, TextView, ImageView } from "tabris";
 
 export default class StationsPage extends Page {
@@ -21,27 +22,19 @@ export default class StationsPage extends Page {
           textColor: "rgb(74, 74, 74)"
         }).appendTo(cell);
         cell.on("change:item", (view, item) => {
-          iconView.set("image", item.icon);
+          iconView.set("image", {src: item.iconUrl, width: 300, height: 300});
           nameView.set("text", item.name);
         });
       }
-    }).on("select", (widget, item) => {
-      this.tuneIn(item);
+    }).on("select", (view, station) => {
+      player.play([station]);
     }).appendTo(this);
   }
 
   load() {
-    fetch(config.server + "/files/stations").then(rsp => rsp.json()).then(stations => {
-      this._stationsList.set("items", stations.map(item => ({
-        name: item.name,
-        stream: item.stream,
-        icon: {src: config.server + "/files/stations/" + item.icon, width: 300, height: 300}
-      })));
+    loadStations().then(stations => {
+      this._stationsList.set("items", stations);
     });
-  }
-
-  tuneIn(station) {
-    fetch(config.server + "/play/" + station.stream);
   }
 
 }

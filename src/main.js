@@ -1,10 +1,10 @@
 require("whatwg-fetch");
 require("babel-polyfill/dist/polyfill.min.js");
 
-import config from "./config";
-import AlbumsPage from "./pages/albums-page.js";
-import PlayerPage from "./pages/player-page.js";
-import StationsPage from "./pages/stations-page.js";
+import player from "./model/player";
+import AlbumsPage from "./pages/AlbumsPage.js";
+import PlayerPage from "./pages/PlayerPage.js";
+import StationsPage from "./pages/StationsPage.js";
 import { Action, Drawer, PageSelector } from "tabris";
 
 new PlayerPage().open();
@@ -14,7 +14,7 @@ new AlbumsPage().load();
 new Action({
   "title": "Stop"
 }).on("select", () => {
-  fetch(config.server + "/stop");
+  player.stop();
 });
 
 new Drawer().append(new PageSelector());

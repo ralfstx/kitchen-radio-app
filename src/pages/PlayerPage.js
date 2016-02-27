@@ -1,4 +1,4 @@
-import config from "../config";
+import player from "../model/player";
 import { Page, Button, TextView, Slider, CollectionView } from "tabris";
 
 export default class PlayerPage extends Page {
@@ -8,9 +8,9 @@ export default class PlayerPage extends Page {
       title: "Player",
       topLevel: true
     });
-    createButton("prev", "<<").appendTo(this);
-    createButton("pause", "||").appendTo(this);
-    createButton("next", ">>").appendTo(this);
+    createButton(player.prev, "<<").appendTo(this);
+    createButton(player.pause, "||").appendTo(this);
+    createButton(player.next, ">>").appendTo(this);
 
     new Button({
       layoutData: {top: 0, left: "prev()"},
@@ -40,12 +40,11 @@ export default class PlayerPage extends Page {
         let timeView = new TextView({
           layoutData: {right: 10, top: 5, bottom: 5, width: 80},
           textColor: "rgb(74, 74, 74)",
-          background: "yellow",
           alignment: "right"
         }).appendTo(cell);
         cell.on("change:item", (view, item) => {
           nameView.set("text", item.name);
-          timeView.set("text", item.time);
+          timeView.set("text", formatTime(item.time));
         });
       }
     }).appendTo(this);
@@ -53,7 +52,7 @@ export default class PlayerPage extends Page {
   }
 
   updateStatus() {
-    fetch(config.server + "/status").then(rsp => rsp.json()).then(status => {
+    player.status().then(status => {
       this._statusView.set("text", status.state);
       if (status.time) {
         let times = status.time.split(':');
@@ -74,11 +73,8 @@ export default class PlayerPage extends Page {
   }
 
   _updatePlaylist() {
-    fetch(config.server + "/playlist").then(rsp => rsp.json()).then(playlist => {
-      this._playlistList.set("items", playlist.map((item, index) => ({
-        name: item.Name || item.Title || index.toString(),
-        time: formatTime(item.Time)
-      })));
+    player.playlist().then(playlist => {
+      this._playlistList.set("items", playlist);
     });
   }
 
@@ -91,9 +87,7 @@ function createButton(cmd, text) {
   return new Button({
     layoutData: {top: 0, left: "prev()"},
     text: text
-  }).on("select", () => {
-    fetch(config.server + "/" + cmd);
-  });
+  }).on("select", cmd);
 }
 
 function formatTime(seconds) {

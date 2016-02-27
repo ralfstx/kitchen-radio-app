@@ -1,11 +1,7 @@
 import _ from "underscore";
-import config from "../config";
+import { loadAlbums, loadAlbum } from "../model/server.js";
 import AlbumPage from "./AlbumPage";
 import { Page, TextView, TextInput, ImageView, CollectionView } from "tabris";
-
-function getCoverImage(album) {
-  return {src: config.server + "/files/albums/" + album.path + "/cover-250.jpg", width: 250, height: 250};
-}
 
 export default class AlbumsPage extends Page {
 
@@ -36,18 +32,21 @@ export default class AlbumsPage extends Page {
           textColor: "rgb(74, 74, 74)"
         }).appendTo(cell);
         cell.on("change:item", (view, album) => {
-          iconView.set("image", getCoverImage(album));
+          iconView.set("image", {src: album.coverUrl, width: 250, height: 250});
           nameView.set("text", album.name);
         });
       }
     }).on("select", (widget, item) => {
-      new AlbumPage(item).open();
+      let page = new AlbumPage().open();
+      loadAlbum(item.path).then(album => {
+        page.album = album;
+      });
     }).appendTo(this);
   }
 
   load() {
-    fetch(config.server + "/files/albums").then(resp => resp.json()).then(result => {
-      this._albums = result;
+    loadAlbums().then(albums => {
+      this._albums = albums;
       this.update();
     });
   }
