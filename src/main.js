@@ -1,6 +1,5 @@
-/* globals fetch: false, Promise: true*/
-Promise = require("promise");
 require("whatwg-fetch");
+require("babel-polyfill/dist/polyfill.min.js");
 
 import config from "./config";
 import AlbumsPage from "./albums-page.js";
