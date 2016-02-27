@@ -18,6 +18,8 @@
   "shadow": true, // tolerate variable shadowing, i.e. re-define variables that have already be defined
   "eqnull": true, // suppress warnings about == null comparisons
 
+  "esversion": 6,
+
   // Globals
 
   "browser": true, // globals exposed by modern browsers e.g. `window`, `document`, etc.
