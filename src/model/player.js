@@ -1,47 +1,55 @@
 import config from "../config";
 
+function get(path) {
+  return fetch(config.server + '/' + path, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+}
+
+function post(cmd, body) {
+  return fetch(config.server + '/' + cmd, {
+    method: 'post',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+}
+
 export default {
 
   play(tracks) {
-    fetch(config.server + "/replace", {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(tracks.map(track => track.url))
-    });
+    if (Array.isArray(tracks)) {
+      return post("replace", tracks.map(track => track.url));
+    }
+    return get("play/" + tracks.url);
   },
 
   append(tracks) {
-    fetch(config.server + "/append", {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(tracks.map(track => track.url))
-    });
+    return post("append", tracks.map(track => track.url));
   },
 
   pause() {
-    fetch(config.server + "/pause");
+    get("/pause");
   },
 
   next() {
-    fetch(config.server + "/next");
+    get("/next");
   },
 
   prev() {
-    fetch(config.server + "/prev");
+    get("/prev");
   },
 
   stop() {
-    fetch(config.server + "/stop");
+    get("/stop");
   },
 
   playlist() {
-    return fetch(config.server + "/playlist")
+    return get("/playlist")
       .then(rsp => rsp.json())
       .then(playlist => playlist.map((item, index) => ({
         name: item.Name || item.Title || 'Track ' + (index + 1),
@@ -50,7 +58,7 @@ export default {
   },
 
   status() {
-    return fetch(config.server + "/status")
+    return get("/status")
       .then(rsp => rsp.json());
   }
 
