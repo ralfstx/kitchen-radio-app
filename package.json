@@ -4,8 +4,8 @@
   "main": "build/src/main.js",
   "scripts": {
     "lint": "jshint",
-    "build": "babel --copy-files --out-dir build/src/ src/",
-    "watch": "babel --watch --copy-files --out-dir build/src/ src/",
+    "build": "babel --retain-lines --copy-files --out-dir build/src/ src/",
+    "watch": "babel --retain-lines --watch --copy-files --out-dir build/src/ src/",
     "pretest": "babel --copy-files --out-dir build/spec/ spec/",
     "test": "jasmine"
   },
