@@ -1,13 +1,15 @@
 /* globals fetch: false, Promise: true*/
-
 Promise = require("promise");
 require("whatwg-fetch");
 
-let config = require("./config");
+import config from "./config";
+import AlbumsPage from "./albums-page.js";
+import PlayerPage from "./player-page.js";
+import StationsPage from "./stations-page.js";
 
-require("./player-page.js").create().open();
-require("./stations-page.js").create();
-require("./albums-page.js").create();
+new PlayerPage().open();
+new StationsPage().load();
+new AlbumsPage().load();
 
 new tabris.Action({
   "title": "Stop"
