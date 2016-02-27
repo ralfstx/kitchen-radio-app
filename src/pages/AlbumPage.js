@@ -1,4 +1,5 @@
 import player from "../model/player";
+import { formatTime } from "../model/helpers";
 import { Page, Button, TextView, ImageView, CollectionView } from "tabris";
 
 export default class AlbumPage extends Page {
@@ -64,23 +65,28 @@ function createAlbumCell(cell) {
     player.play(album.tracks);
   }).appendTo(cell);
   cell.on("change:item", (cell, album) => {
-    coverView.set("image", getCoverImage(album));
+    coverView.set("image", {src: album.url + "/cover-250.jpg", width: 250, height: 250});
   });
 }
 
 function createTrackCell(cell) {
   let titleView = new TextView({
-    left: 45, right: 85, top: 5, bottom: 5,
-    font: "15px sans-serif"
+    left: 8, right: 84, top: 4, bottom: 4,
+    font: "16px sans-serif"
   }).appendTo(cell);
   let timeView = new TextView({
-    right: 10, width: 70, top: 5, bottom: 5,
-    font: "15px sans-serif",
+    right: 8, width: 72, top: 4, bottom: 4,
+    font: "16px sans-serif",
     alignment: "right"
   }).appendTo(cell);
   cell.on("change:item", (cell, track) => {
     titleView.set("text", track.title || track.path);
-    timeView.set("text", formatLength(track.length));
+    timeView.set("text", formatTime(track.length));
+  }).on("tap", () => {
+    let track = cell.get("item");
+    let tracks = track.album.tracks;
+    let index = tracks.indexOf(track);
+    player.play(tracks.slice(index));
   }).on("swipe:left", () => {
     let track = cell.get("item");
     player.play([track]);
@@ -100,10 +106,6 @@ function createSectionCell(cell) {
   });
 }
 
-function getCoverImage(album) {
-  return {src: album.url + "/cover-250.jpg", width: 250, height: 250};
-}
-
 function getItems(album) {
   let items = [];
   album.type = "album";
@@ -119,14 +121,4 @@ function getItems(album) {
     });
   });
   return items;
-}
-
-function formatLength(seconds) {
-  if (!seconds) {
-    return "";
-  }
-  let pad = n => n < 10 ? "0" + n : "" + n;
-  let m = Math.floor(seconds / 60);
-  let s = Math.floor(seconds - (m * 60));
-  return m + ":" + pad(s);
 }

@@ -1,4 +1,5 @@
 import player from "../model/player";
+import { formatTime } from "../model/helpers";
 import { Page, Button, TextView, Slider, CollectionView } from "tabris";
 
 export default class PlayerPage extends Page {
@@ -88,15 +89,6 @@ function createButton(cmd, text) {
     layoutData: {top: 0, left: "prev()"},
     text: text
   }).on("select", cmd);
-}
-
-function formatTime(seconds) {
-  if (!seconds) {
-    return "";
-  }
-  let min = Math.floor(seconds / 60);
-  let sec = seconds % 60;
-  return min + (sec < 10 ? ":0" : ":") + sec;
 }
 
 /*

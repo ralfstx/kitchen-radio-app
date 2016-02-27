@@ -1,7 +1,24 @@
 import _ from "underscore";
+import { splice } from "../model/helpers";
 import { loadAlbums, loadAlbum } from "../model/server.js";
 import AlbumPage from "./AlbumPage";
-import { Page, TextView, TextInput, ImageView, CollectionView } from "tabris";
+import { Page, TextInput, ImageView, CollectionView } from "tabris";
+
+function albumView(properties) {
+  return new ImageView(Object.assign({
+    scaleMode: "fill"
+  }, properties)).on("change:album", (view, album) => {
+    view.set("image", album ? {src: album.coverUrl, width: 250, height: 250} : null);
+  }).on("tap", view => {
+    let album = view.get("album");
+    if (album) {
+      let page = new AlbumPage().open();
+      loadAlbum(album.path).then(album => {
+        page.album = album;
+      });
+    }
+  });
+}
 
 export default class AlbumsPage extends Page {
 
@@ -11,36 +28,27 @@ export default class AlbumsPage extends Page {
       topLevel: true
     });
     this._albums = [];
-
-    this._filterInput = new TextInput({
-      layoutData: {left: 0, right: 0, top: 0},
+    this._filter = '';
+    new TextInput({
+      left: 8, right: 8, top: 0,
       message: "filter"
-    }).on("change:text", () => {
-      this.showAlbums();
+    }).on("input", (view, text) => {
+      this._filter = text;
+      this.update();
     }).appendTo(this);
-
     this._albumsList = new CollectionView({
-      layoutData: {left: 0, right: 0, top: ["prev()", 0], bottom: 0},
-      itemHeight: 60,
+      left: 0, right: 0, top: "prev()", bottom: 0,
+      itemHeight: 128,
       initializeCell: cell => {
-        let iconView = new ImageView({
-          layoutData: {left: 0, top: 0, width: 60, height: 60},
-          scaleMode: "fill"
-        }).appendTo(cell);
-        let nameView = new TextView({
-          layoutData: {left: 80, right: 10, top: 5, bottom: 5},
-          textColor: "rgb(74, 74, 74)"
-        }).appendTo(cell);
-        cell.on("change:item", (view, album) => {
-          iconView.set("image", {src: album.coverUrl, width: 250, height: 250});
-          nameView.set("text", album.name);
+        let view1 = albumView({ left: 8, top: 4, width: 120, height: 120 }).appendTo(cell);
+        let view2 = albumView({ left: 136, top: 4, width: 120, height: 120 }).appendTo(cell);
+        let view3 = albumView({ left: 264, top: 4, width: 120, height: 120 }).appendTo(cell);
+        cell.on("change:item", (view, row) => {
+          view1.set("album", row[0]);
+          view2.set("album", row[1]);
+          view3.set("album", row[2]);
         });
       }
-    }).on("select", (widget, item) => {
-      let page = new AlbumPage().open();
-      loadAlbum(item.path).then(album => {
-        page.album = album;
-      });
     }).appendTo(this);
   }
 
@@ -52,12 +60,12 @@ export default class AlbumsPage extends Page {
   }
 
   update() {
-    let filter = this._filterInput.get("text");
+    let filter = this._filter.toLowerCase();
     if (filter) {
-      let match = album => (album.name || "").toLowerCase().indexOf(filter.toLowerCase()) !== -1;
-      this._albumsList.set("items", this._albums.filter(match));
+      let match = album => (album.name || "").toLowerCase().indexOf(filter) !== -1;
+      this._albumsList.set("items", splice(this._albums.filter(match), 3));
     } else {
-      this._albumsList.set("items", _.shuffle(this._albums));
+      this._albumsList.set("items", splice(_.shuffle(this._albums), 3));
     }
   }
 
