@@ -6,11 +6,11 @@ var config = require("./config");
 
 exports.create = function(album) {
 
-  var page = tabris.create("Page", {
+  var page = new tabris.Page({
     title: album.name
   }).on("change:bounds", layout);
 
-  var trackListView = tabris.create("CollectionView", {
+  var trackListView = new tabris.CollectionView({
     itemHeight: function(item) {
       if (item.type === "album") {
         return 500;
@@ -33,11 +33,11 @@ exports.create = function(album) {
   }).appendTo(page);
 
   function createAlbumCell(parent) {
-    var coverView = tabris.create("ImageView", {
+    var coverView = new tabris.ImageView({
       left: 0, right: 0, top: 0, bottom: 0,
       scaleMode: "fit"
     }).appendTo(parent);
-    tabris.create("Button", {
+    new tabris.Button({
       right: 50, bottom: 50,
       text: "play",
     }).on("select", function() {
@@ -49,11 +49,11 @@ exports.create = function(album) {
   }
 
   function createTrackCell(parent) {
-    var titleView = tabris.create("TextView", {
+    var titleView = new tabris.TextView({
       left: 45, right: 85, top: 5, bottom: 5,
       font: "15px sans-serif"
     }).appendTo(parent);
-    var timeView = tabris.create("TextView", {
+    var timeView = new tabris.TextView({
       right: 10, width: 70, top: 5, bottom: 5,
       font: "15px sans-serif",
       alignment: "right"
@@ -71,7 +71,7 @@ exports.create = function(album) {
   }
 
   function createSectionCell(parent) {
-    var textView = tabris.create("TextView", {
+    var textView = new tabris.TextView({
       left: 45, right: 85, top: 5, bottom: 5,
       font: "bold 18px sans-serif"
     }).appendTo(parent);

@@ -7,13 +7,10 @@ require("./player-page.js").create().open();
 require("./stations-page.js").create();
 require("./albums-page.js").create();
 
-tabris.create("Action", {
+new tabris.Action({
   "title": "Stop"
 }).on("select", function() {
   fetch(config.server + "/stop");
 });
 
-var drawer = tabris.create("Drawer");
-
-tabris.create("PageSelector", {
-}).appendTo(drawer);
+new tabris.Drawer().append(new tabris.PageSelector());

@@ -6,7 +6,7 @@
     "build": "babel --copy-files --out-dir build/src/ src/"
   },
   "dependencies": {
-    "tabris": "^1.6.0",
+    "tabris": "https://tabrisjs.com/downloads/nightly/tabris.tgz",
     "promise": "^6.1.0",
     "whatwg-fetch": "^0.7.0",
     "underscore": "^1.7.0"

@@ -5,7 +5,7 @@ var config = require("./config");
 
 exports.create = function() {
 
-  var page = tabris.create("Page", {
+  var page = new tabris.Page({
     title: "Player",
     topLevel: true
   });
@@ -18,7 +18,7 @@ exports.create = function() {
 
   var lastButton;
   function createButton(cmd) {
-    var button = tabris.create("Button", {
+    var button = new tabris.Button({
       layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
       text: cmd
     }).on("select", function() {
@@ -28,32 +28,32 @@ exports.create = function() {
     return button;
   }
 
-  tabris.create("Button", {
+  new tabris.Button({
     layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
     text: "refresh"
   }).on("select", function() {
     updateStatus();
   }).appendTo(page);
 
-  var statusView = tabris.create("TextView", {
+  var statusView = new tabris.TextView({
     layoutData: {left: 0, right: 0, top: [lastButton, 5]},
     text: "..."
   }).appendTo(page);
 
-  var slider = tabris.create("Slider", {
+  var slider = new tabris.Slider({
     layoutData: {left: 0, right: 0, top: [statusView, 5]},
     maximum: 1000
   }).appendTo(page);
 
-  var playlistList = tabris.create("CollectionView", {
+  var playlistList = new tabris.CollectionView({
     layoutData: {left: 0, right: 0, top: [slider, 5], bottom: 0},
     itemHeight: 60,
     initializeCell: function(cell) {
-      var nameView = tabris.create("TextView", {
+      var nameView = new tabris.TextView({
         layoutData: {left: 10, right: 100, top: 5, bottom: 5},
         textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
-      var timeView = tabris.create("TextView", {
+      var timeView = new tabris.TextView({
         layoutData: {right: 10, top: 5, bottom: 5, width: 80},
         textColor: "rgb(74, 74, 74)",
         background: "yellow",
