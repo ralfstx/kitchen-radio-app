@@ -6,7 +6,7 @@ if (typeof window === "undefined") {
 
 require("tabris");
 
-var ClientSpy = function() {
+let ClientSpy = function() {
 };
 
 ClientSpy.prototype = {

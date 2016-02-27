@@ -1,85 +1,80 @@
 /* globals fetch: false, Promise: true*/
+
 Promise = require("promise");
 require("whatwg-fetch");
-var config = require("./config");
+
+let config = require("./config");
 
 exports.create = function() {
 
-  var page = new tabris.Page({
+  let page = new tabris.Page({
     title: "Player",
     topLevel: true
   });
 
-  createButton("play").appendTo(page);
-  createButton("pause").appendTo(page);
-  createButton("stop").appendTo(page);
-  createButton("prev").appendTo(page);
-  createButton("next").appendTo(page);
+  createButton("prev", "<<").appendTo(page);
+  createButton("pause", "||").appendTo(page);
+  createButton("next", ">>").appendTo(page);
 
-  var lastButton;
-  function createButton(cmd) {
-    var button = new tabris.Button({
-      layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
-      text: cmd
-    }).on("select", function() {
+  function createButton(cmd, text) {
+    return new tabris.Button({
+      layoutData: {top: 0, left: "prev()"},
+      text: text
+    }).on("select", () => {
       fetch(config.server + "/" + cmd);
     });
-    lastButton = button;
-    return button;
   }
 
   new tabris.Button({
-    layoutData: {top: 0, left: lastButton ? [lastButton, 0] : 0},
+    layoutData: {top: 0, left: "prev()"},
     text: "refresh"
-  }).on("select", function() {
+  }).on("select", () => {
     updateStatus();
   }).appendTo(page);
 
-  var statusView = new tabris.TextView({
-    layoutData: {left: 0, right: 0, top: [lastButton, 5]},
+  let statusView = new tabris.TextView({
+    layoutData: {left: 0, right: 0, top: "prev()"},
     text: "..."
   }).appendTo(page);
 
-  var slider = new tabris.Slider({
-    layoutData: {left: 0, right: 0, top: [statusView, 5]},
+  let slider = new tabris.Slider({
+    layoutData: {left: 0, right: 0, top: ["prev()", 5]},
     maximum: 1000
   }).appendTo(page);
 
-  var playlistList = new tabris.CollectionView({
+  let playlistList = new tabris.CollectionView({
     layoutData: {left: 0, right: 0, top: [slider, 5], bottom: 0},
     itemHeight: 60,
-    initializeCell: function(cell) {
-      var nameView = new tabris.TextView({
+    initializeCell: cell => {
+      let nameView = new tabris.TextView({
         layoutData: {left: 10, right: 100, top: 5, bottom: 5},
         textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
-      var timeView = new tabris.TextView({
+      let timeView = new tabris.TextView({
         layoutData: {right: 10, top: 5, bottom: 5, width: 80},
         textColor: "rgb(74, 74, 74)",
         background: "yellow",
         alignment: "right"
       }).appendTo(cell);
-      cell.on("change:item", function(view, item) {
+      cell.on("change:item", (view, item) => {
         nameView.set("text", item.name);
         timeView.set("text", item.time);
       });
     }
   }).appendTo(page);
 
-  var playlist;
-  var song;
+  let playlist;
+  let song;
 
   updateStatus();
 
   function updateStatus() {
-    fetch(config.server + "/status").then(function(response) {
-      return response.json();
-    }).then(function(status) {
+    fetch(config.server + "/status").then(rsp => rsp.json()).then(status => {
       statusView.set("text", status.state);
       if (status.time) {
-        var times = status.time.split(':');
-        var total = parseInt(times[1]);
-        var elapsed = parseInt(times[0]);
+        let times = status.time.split(':');
+        let total = parseInt(times[1]);
+        let elapsed = parseInt(times[0]);
         if (Number.isFinite(total) && Number.isFinite(elapsed)) {
           slider.set({maximum: total, selection: elapsed});
         }
@@ -95,15 +90,11 @@ exports.create = function() {
   }
 
   function updatePlaylist() {
-    fetch(config.server + "/playlist").then(function(response) {
-      return response.json();
-    }).then(function(playlist) {
-      playlistList.set("items", playlist.map(function(item, index) {
-        return {
-          name: item.Name || item.Title || index.toString(),
-          time: formatTime(item.Time)
-        };
-      }));
+    fetch(config.server + "/playlist").then(rsp => rsp.json()).then(playlist => {
+      playlistList.set("items", playlist.map((item, index) => ({
+        name: item.Name || item.Title || index.toString(),
+        time: formatTime(item.Time)
+      })));
     });
   }
 
@@ -114,8 +105,8 @@ exports.create = function() {
     if (!seconds) {
       return "";
     }
-    var min = Math.floor(seconds / 60);
-    var sec = seconds % 60;
+    let min = Math.floor(seconds / 60);
+    let sec = seconds % 60;
     return min + (sec < 10 ? ":0" : ":") + sec;
   }
 

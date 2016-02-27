@@ -1,48 +1,48 @@
 /* globals fetch: false, Promise: true*/
+
 Promise = require("promise");
 require("whatwg-fetch");
-var _ = require("underscore");
-var config = require("./config");
-var AlbumPage = require("./album-page");
+
+let _ = require("underscore");
+let config = require("./config");
+let AlbumPage = require("./album-page");
 
 exports.create = function() {
 
-  var page = new tabris.Page({
+  let page = new tabris.Page({
     title: "Collection",
     topLevel: true
   });
 
-  var filterInput = new tabris.TextInput({
+  let filterInput = new tabris.TextInput({
     layoutData: {left: 0, right: 0, top: 0},
     message: "filter"
   }).on("change:text", showAlbums).appendTo(page);
 
-  var albumsList = new tabris.CollectionView({
+  let albumsList = new tabris.CollectionView({
     layoutData: {left: 0, right: 0, top: [filterInput, 0], bottom: 0},
     itemHeight: 60,
-    initializeCell: function(cell) {
-      var iconView = new tabris.ImageView({
+    initializeCell: cell => {
+      let iconView = new tabris.ImageView({
         layoutData: {left: 0, top: 0, width: 60, height: 60},
         scaleMode: "fill"
       }).appendTo(cell);
-      var nameView = new tabris.TextView({
+      let nameView = new tabris.TextView({
         layoutData: {left: 80, right: 10, top: 5, bottom: 5},
         textColor: "rgb(74, 74, 74)"
       }).appendTo(cell);
-      cell.on("change:item", function(view, album) {
+      cell.on("change:item", (view, album) => {
         iconView.set("image", getCoverImage(album));
         nameView.set("text", album.name);
       });
     }
-  }).on("select", function(widget, item) {
+  }).on("select", (widget, item) => {
     AlbumPage.create(item).open();
   }).appendTo(page);
 
-  var albums;
+  let albums;
 
-  fetch(config.server + "/files/albums").then(function(response) {
-    return response.json();
-  }).then(function(result) {
+  fetch(config.server + "/files/albums").then(resp => resp.json()).then(result => {
     albums = result;
     showAlbums();
   });
@@ -52,11 +52,10 @@ exports.create = function() {
   }
 
   function showAlbums() {
-    var filter = filterInput.get("text");
+    let filter = filterInput.get("text");
     if (filter) {
-      albumsList.set("items", albums.filter(function(album) {
-        return (album.name || "").toLowerCase().indexOf(filter.toLowerCase()) !== -1;
-      }));
+      let match = album => (album.name || "").toLowerCase().indexOf(filter.toLowerCase()) !== -1;
+      albumsList.set("items", albums.filter(match));
     } else {
       albumsList.set("items", _.shuffle(albums));
     }

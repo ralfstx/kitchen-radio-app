@@ -1,7 +1,7 @@
 require("./tabris-mock.js");
-var $ = require("../src/lib/jquery.min.js");
-var config = require("../src/config");
-var stationsPage = require("../src/stations-page.js");
+let $ = require("../src/lib/jquery.min.js");
+let config = require("../src/config");
+let stationsPage = require("../src/stations-page.js");
 
 describe("stations-page:", function() {
 
@@ -11,7 +11,7 @@ describe("stations-page:", function() {
 
   describe("create", function() {
 
-    var page;
+    let page;
 
     beforeEach(function() {
       spyOn($, "getJSON");

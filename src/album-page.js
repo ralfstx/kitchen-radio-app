@@ -1,27 +1,21 @@
 /* globals fetch: false, Promise: true*/
+
 Promise = require("promise");
 require("whatwg-fetch");
-var _ = require("underscore");
-var config = require("./config");
+
+let _ = require("underscore");
+let config = require("./config");
 
 exports.create = function(album) {
 
-  var page = new tabris.Page({
+  let page = new tabris.Page({
     title: album.name
   }).on("change:bounds", layout);
 
-  var trackListView = new tabris.CollectionView({
-    itemHeight: function(item) {
-      if (item.type === "album") {
-        return 500;
-      } else {
-        return 50;
-      }
-    },
-    cellType: function(item) {
-      return item.type;
-    },
-    initializeCell: function(cell, type) {
+  let trackListView = new tabris.CollectionView({
+    itemHeight: item => item.type === "album" ? 500 : 50,
+    cellType: item => item.type,
+    initializeCell: (cell, type) => {
       if (type === "album") {
         return createAlbumCell(cell);
       } else if (type === "track") {
@@ -33,56 +27,54 @@ exports.create = function(album) {
   }).appendTo(page);
 
   function createAlbumCell(parent) {
-    var coverView = new tabris.ImageView({
+    let coverView = new tabris.ImageView({
       left: 0, right: 0, top: 0, bottom: 0,
       scaleMode: "fit"
     }).appendTo(parent);
     new tabris.Button({
       right: 50, bottom: 50,
       text: "play",
-    }).on("select", function() {
+    }).on("select", () => {
       play(getTracks());
     }).appendTo(parent);
-    parent.on("change:item", function() {
+    parent.on("change:item", () => {
       coverView.set("image", getCoverImage());
     });
   }
 
   function createTrackCell(parent) {
-    var titleView = new tabris.TextView({
+    let titleView = new tabris.TextView({
       left: 45, right: 85, top: 5, bottom: 5,
       font: "15px sans-serif"
     }).appendTo(parent);
-    var timeView = new tabris.TextView({
+    let timeView = new tabris.TextView({
       right: 10, width: 70, top: 5, bottom: 5,
       font: "15px sans-serif",
       alignment: "right"
     }).appendTo(parent);
-    parent.on("change:item", function(view, track) {
+    parent.on("change:item", (view, track) => {
       titleView.set("text", track.title || track.path);
       timeView.set("text", formatLength(track.length));
-    }).on("swipe:left", function() {
-      var track = parent.get("item");
+    }).on("swipe:left", () => {
+      let track = parent.get("item");
       play([track]);
-    }).on("swipe:right", function() {
-      var track = parent.get("item");
+    }).on("swipe:right", () => {
+      let track = parent.get("item");
       append([track]);
     });
   }
 
   function createSectionCell(parent) {
-    var textView = new tabris.TextView({
+    let textView = new tabris.TextView({
       left: 45, right: 85, top: 5, bottom: 5,
       font: "bold 18px sans-serif"
     }).appendTo(parent);
-    parent.on("change:item", function(view, disc) {
+    parent.on("change:item", (view, disc) => {
       textView.set("text", "Disc " + disc.number);
     });
   }
 
-  fetch(config.server + "/files/albums/" + album.path + "/").then(function(response) {
-    return response.json();
-  }).then(function(result) {
+  fetch(config.server + "/files/albums/" + album.path + "/").then(rsp => rsp.json()).then(result => {
     _.extend(album, result);
     update();
   });
@@ -119,24 +111,24 @@ exports.create = function(album) {
   }
 
   function getTrackUrl(track) {
-    function notEmpty(value) { return !!value; }
-    var parts = [album.path, track.disc ? track.disc.path : "", track.path];
+    let notEmpty = value => !!value;
+    let parts = [album.path, track.disc ? track.disc.path : "", track.path];
     return config.server + "/files/albums/" + parts.filter(notEmpty).map(encodeURIComponent).join("/");
   }
 
   function getItems() {
-    var items = [];
+    let items = [];
     if (album) {
       album.type = "album";
       items.push(album);
       if ("discs" in album) {
-        album.discs.forEach(function(disc, index) {
+        album.discs.forEach((disc, index) => {
           disc.album = album;
           disc.number = index + 1;
           disc.type = "disc";
           items.push(disc);
           if ("tracks" in disc) {
-            disc.tracks.forEach(function(track, index) {
+            disc.tracks.forEach((track, index) => {
               track.album = album;
               track.disc = disc;
               track.number = index + 1;
@@ -147,7 +139,7 @@ exports.create = function(album) {
         });
       }
       if ("tracks" in album) {
-        album.tracks.forEach(function(track, index) {
+        album.tracks.forEach((track, index) => {
           track.album = album;
           track.number = index + 1;
           track.type = "track";
@@ -159,13 +151,11 @@ exports.create = function(album) {
   }
 
   function getTracks() {
-    return getItems().filter(function(item) {
-      return item.type === "track";
-    });
+    return getItems().filter(item => item.type === "track");
   }
 
   function layout() {
-    var bounds = page.get("bounds");
+    let bounds = page.get("bounds");
     if (bounds.width > bounds.height) {
       // landscape
       trackListView.set("layoutData", {left: 0, top: 0, bottom: 0, right: 0});
@@ -179,11 +169,9 @@ exports.create = function(album) {
     if (!seconds) {
       return "";
     }
-    function pad(n) {
-      return n < 10 ? "0" + n : "" + n;
-    }
-    var m = Math.floor(seconds / 60);
-    var s = Math.floor(seconds - (m * 60));
+    let pad = n => n < 10 ? "0" + n : "" + n;
+    let m = Math.floor(seconds / 60);
+    let s = Math.floor(seconds - (m * 60));
     return m + ":" + pad(s);
   }
 
