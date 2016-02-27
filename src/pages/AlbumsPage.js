@@ -1,6 +1,6 @@
 import _ from "underscore";
-import config from "./config";
-import AlbumPage from "./album-page";
+import config from "../config";
+import AlbumPage from "./AlbumPage";
 import { Page, TextView, TextInput, ImageView, CollectionView } from "tabris";
 
 function getCoverImage(album) {

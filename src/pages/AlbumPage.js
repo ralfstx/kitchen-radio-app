@@ -1,5 +1,5 @@
 import _ from "underscore";
-import config from "./config";
+import config from "../config";
 import { Page, Button, TextView, ImageView, CollectionView } from "tabris";
 
 export default class AlbumPage extends Page {

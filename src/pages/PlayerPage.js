@@ -1,4 +1,4 @@
-import config from "./config";
+import config from "../config";
 import { Page, Button, TextView, Slider, CollectionView } from "tabris";
 
 export default class PlayerPage extends Page {

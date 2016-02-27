@@ -1,5 +1,5 @@
-import config from "./config";
-import {Page, CollectionView, TextView, ImageView} from "tabris";
+import config from "../config";
+import { Page, CollectionView, TextView, ImageView } from "tabris";
 
 export default class StationsPage extends Page {
 

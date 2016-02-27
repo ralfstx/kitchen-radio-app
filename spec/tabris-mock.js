@@ -1,7 +1,10 @@
 /*global window: true */
 
 if (typeof window === "undefined") {
-  window = global;
+  global.window = global;
+}
+if (typeof fetch === "undefined") {
+  global.fetch = function() {};
 }
 
 require("tabris");
