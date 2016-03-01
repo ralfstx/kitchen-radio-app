@@ -1,7 +1,7 @@
-import config from "../config";
+import config from "./config";
 
 function get(path) {
-  return fetch(config.server + '/' + path, {
+  return fetch(config.serverUrl + '/' + path, {
     headers: {
       'Accept': 'application/json'
     }
@@ -9,7 +9,7 @@ function get(path) {
 }
 
 function post(cmd, body) {
-  return fetch(config.server + '/' + cmd, {
+  return fetch(config.serverUrl + '/' + cmd, {
     method: 'post',
     headers: {
       'Accept': 'application/json',

@@ -1,6 +1,7 @@
 import _ from "underscore";
 import { splice } from "../model/helpers";
-import { loadAlbums, loadAlbum } from "../model/server.js";
+import config from "../model/config";
+import { loadAlbums, loadAlbum } from "../model/server";
 import AlbumPage from "./AlbumPage";
 import { Page, TextInput, ImageView, CollectionView } from "tabris";
 
@@ -50,6 +51,9 @@ export default class AlbumsPage extends Page {
         });
       }
     }).appendTo(this);
+    config.on("change:serverUrl", () => {
+      this.load();
+    });
   }
 
   load() {
