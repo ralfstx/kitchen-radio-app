@@ -6,7 +6,9 @@ import { Page, CollectionView, ImageView } from "tabris";
 
 function stationView(properties) {
   return new ImageView(Object.assign({
-    scaleMode: "fill", elevation: 2
+    scaleMode: "fill",
+    background: "white",
+    elevation: 2
   }, properties)).on("change:station", (view, station) => {
     view.set("image", station ? {src: station.iconUrl, width: 300, height: 300} : null);
   }).on("tap", view => {

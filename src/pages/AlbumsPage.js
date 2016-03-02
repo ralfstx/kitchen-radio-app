@@ -8,7 +8,8 @@ import { Page, TextInput, ImageView, CollectionView } from "tabris";
 function albumView(properties) {
   return new ImageView(Object.assign({
     scaleMode: "fill",
-    elevation: 12
+    background: "white",
+    elevation: 2
   }, properties)).on("change:album", (view, album) => {
     view.set("image", album ? {src: album.coverUrl, width: 250, height: 250} : null);
   }).on("tap", view => {
