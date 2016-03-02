@@ -70,16 +70,23 @@ function createAlbumCell(cell) {
 }
 
 function createTrackCell(cell) {
+  let numberView = new TextView({
+    left: 8, width: 32, top: 4, bottom: 4,
+    alignment: "right",
+    opacity: 0.25,
+    font: "16px sans-serif"
+  }).appendTo(cell);
   let titleView = new TextView({
-    left: 8, right: 84, top: 4, bottom: 4,
+    left: 48, right: 84, top: 4, bottom: 4,
     font: "16px sans-serif"
   }).appendTo(cell);
   let timeView = new TextView({
-    right: 8, width: 72, top: 4, bottom: 4,
-    font: "16px sans-serif",
-    alignment: "right"
+    right: 16, width: 72, top: 4, bottom: 4,
+    alignment: "right",
+    font: "16px sans-serif"
   }).appendTo(cell);
   cell.on("change:item", (cell, track) => {
+    numberView.set("text", track.number);
     titleView.set("text", track.title || track.path);
     timeView.set("text", formatTime(track.length));
   }).on("tap", () => {

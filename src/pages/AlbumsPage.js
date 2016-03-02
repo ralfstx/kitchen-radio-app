@@ -1,13 +1,14 @@
 import _ from "underscore";
-import { splice } from "../model/helpers";
 import config from "../model/config";
+import { splice } from "../model/helpers";
 import { loadAlbums, loadAlbum } from "../model/server";
 import AlbumPage from "./AlbumPage";
 import { Page, TextInput, ImageView, CollectionView } from "tabris";
 
 function albumView(properties) {
   return new ImageView(Object.assign({
-    scaleMode: "fill"
+    scaleMode: "fill",
+    elevation: 12
   }, properties)).on("change:album", (view, album) => {
     view.set("image", album ? {src: album.coverUrl, width: 250, height: 250} : null);
   }).on("tap", view => {
@@ -39,11 +40,11 @@ export default class AlbumsPage extends Page {
     }).appendTo(this);
     this._albumsList = new CollectionView({
       left: 0, right: 0, top: "prev()", bottom: 0,
-      itemHeight: 128,
+      itemHeight: 132,
       initializeCell: cell => {
-        let view1 = albumView({ left: 8, top: 4, width: 120, height: 120 }).appendTo(cell);
-        let view2 = albumView({ left: 136, top: 4, width: 120, height: 120 }).appendTo(cell);
-        let view3 = albumView({ left: 264, top: 4, width: 120, height: 120 }).appendTo(cell);
+        let view1 = albumView({ left: 12, top: 4, width: 124, height: 124 }).appendTo(cell);
+        let view2 = albumView({ left: 144, top: 4, width: 124, height: 124 }).appendTo(cell);
+        let view3 = albumView({ left: 276, top: 4, width: 124, height: 124 }).appendTo(cell);
         cell.on("change:item", (view, row) => {
           view1.set("album", row[0]);
           view2.set("album", row[1]);

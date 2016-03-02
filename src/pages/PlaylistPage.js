@@ -2,7 +2,7 @@ import player from "../model/player";
 import { formatTime } from "../model/helpers";
 import { Page, Button, TextView, Slider, CollectionView } from "tabris";
 
-export default class PlayerPage extends Page {
+export default class PlaylistPage extends Page {
 
   constructor() {
     super({
