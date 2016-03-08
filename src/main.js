@@ -1,5 +1,10 @@
+var t0 = Date.now();
 require("whatwg-fetch");
+var t1 = Date.now();
 require("babel-polyfill/dist/polyfill.min.js");
+var t2 = Date.now();
+console.log("loading fetch", t1 - t0);
+console.log("loading polyfill", t2 - t1);
 
 import config from "./model/config";
 import player from "./model/player";

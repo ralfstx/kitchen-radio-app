@@ -46,8 +46,16 @@ module.exports = function(grunt) {
           }
         }
       },
+      jasmine: {
+        command: "jasmine"
+      },
       cordova: {
-        command: ["cd cordova", "cordova build"].join("&&")
+        command: "cordova build",
+        options: {
+          execOptions: {
+            cwd: "build/cordova"
+          }
+        }
       }
     }
   });
@@ -57,7 +65,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-babel");
   grunt.loadNpmTasks("grunt-shell");
 
-  grunt.registerTask("default", ["clean", "copy:app", "babel:app"]);
+  grunt.registerTask("build", ["copy:app", "babel:app"]);
+
+  grunt.registerTask("test", ["shell:jasmine"]);
+
+  grunt.registerTask("default", ["clean", "build"]);
 
   grunt.registerTask("serve", ["default", "shell:serve"]);
 

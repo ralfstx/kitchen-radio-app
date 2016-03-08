@@ -2,6 +2,11 @@
   "name": "kitchen-radio-app",
   "version": "0.0.1",
   "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ralfstx/kitchen-radio-app.git"
+  },
+  "license": "MIT",
   "scripts": {
     "lint": "jshint",
     "build": "babel --retain-lines --copy-files --out-dir build/src/ src/",
