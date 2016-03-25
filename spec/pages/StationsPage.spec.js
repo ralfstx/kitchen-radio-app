@@ -1,12 +1,12 @@
 import "../tabris-mock.js";
-import config from "../../src/config";
+import settings from "../../src/model/settings";
 import StationsPage from "../../src/pages/StationsPage.js";
 import { Page } from "tabris";
 
 describe("StationsPage", function() {
 
   beforeEach(function() {
-    config.server = "SERVER";
+    settings.server = "SERVER";
     spyOn(global, "fetch").and.returnValue(Promise.resolve({
       json: () => ({
       })

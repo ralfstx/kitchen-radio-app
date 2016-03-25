@@ -1,5 +1,5 @@
 import _ from "underscore";
-import config from "../model/config";
+import settings from "../model/settings";
 import { splice } from "../model/helpers";
 import { loadAlbums, loadAlbum } from "../model/server";
 import AlbumPage from "./AlbumPage";
@@ -53,7 +53,7 @@ export default class AlbumsPage extends Page {
         });
       }
     }).appendTo(this);
-    config.on("change:serverUrl", () => {
+    settings.on("change:serverUrl", () => {
       this.load();
     });
   }

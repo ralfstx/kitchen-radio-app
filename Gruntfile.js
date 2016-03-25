@@ -10,7 +10,6 @@ module.exports = function(grunt) {
           "src/**",
           "node_modules/tabris/**",
           "node_modules/underscore/**",
-          "node_modules/whatwg-fetch/**",
           "node_modules/babel-polyfill/**"
         ], //*/
         dest: "build/app/"

@@ -1,7 +1,7 @@
 {
   "name": "kitchen-radio-app",
   "version": "0.0.1",
-  "main": "src/main.js",
+  "main": "build/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ralfstx/kitchen-radio-app.git"
@@ -9,16 +9,17 @@
   "license": "MIT",
   "scripts": {
     "lint": "jshint",
-    "build": "babel --retain-lines --copy-files --out-dir build/src/ src/",
-    "watch": "babel --retain-lines --watch --copy-files --out-dir build/src/ src/",
-    "pretest": "babel --copy-files --out-dir build/spec/ spec/",
-    "test": "jasmine"
+    "build:ios": "rm -rf build/ && cp babel-ios.json .babelrc && babel --copy-files --out-dir build/ src/",
+    "build:android": "rm -rf build/ && cp babel-android.json .babelrc && babel --copy-files --out-dir build/ src/",
+    "watch": "babel --retain-lines --watch --copy-files --out-dir build/ src/",
+    "pretest": "rm -rf build/ && cp babel-test.json .babelrc && babel --copy-files --out-dir build/src/ src/ && babel --copy-files --out-dir build/spec/ spec/",
+    "test": "jasmine",
+    "start": "hs -c-1"
   },
   "dependencies": {
-    "babel-polyfill": "^6.5.0",
+    "core-js": "^2.2.1",
     "tabris": "https://tabrisjs.com/downloads/nightly/tabris.tgz",
-    "underscore": "^1.7.0",
-    "whatwg-fetch": "^0.11.0"
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

@@ -1,4 +1,4 @@
-import config from "../model/config";
+import settings from "../model/settings";
 import player from "../model/player";
 import { splice } from "../model/helpers";
 import { loadStations } from "../model/server.js";
@@ -38,7 +38,7 @@ export default class StationsPage extends Page {
         });
       }
     }).appendTo(this);
-    config.on("change:serverUrl", () => {
+    settings.on("change:serverUrl", () => {
       this.load();
     });
   }
