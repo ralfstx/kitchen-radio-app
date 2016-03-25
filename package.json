@@ -8,12 +8,9 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "jshint",
     "build:ios": "rm -rf build/ && cp babel-ios.json .babelrc && babel --copy-files --out-dir build/ src/",
     "build:android": "rm -rf build/ && cp babel-android.json .babelrc && babel --copy-files --out-dir build/ src/",
-    "watch": "babel --retain-lines --watch --copy-files --out-dir build/ src/",
-    "pretest": "rm -rf build/ && cp babel-test.json .babelrc && babel --copy-files --out-dir build/src/ src/ && babel --copy-files --out-dir build/spec/ spec/",
-    "test": "jasmine",
+    "test": "cp babel-test.json .babelrc && mocha --compilers js:babel-core/register 'test/**/*.spec.js'",
     "start": "hs -c-1"
   },
   "dependencies": {
@@ -22,12 +19,10 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.5.1",
+    "babel-cli": "^6.6.0",
     "babel-preset-es2015": "^6.5.0",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-copy": "^0.8.0",
-    "grunt-shell": "^1.1.2"
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "sinon": "^1.17.3"
   }
 }

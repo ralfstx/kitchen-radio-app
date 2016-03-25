@@ -16,7 +16,7 @@
 
   "shadow": true, // tolerate variable shadowing, i.e. re-define variables that have already be defined
   "eqnull": true, // suppress warnings about == null comparisons
-
+  "expr": true, // tolerate expressions where assignments are expected
   "esversion": 6,
 
   // Globals
@@ -31,13 +31,10 @@
     "exports": false,
     "require": false,
 
-    // jasmine
-    "jasmine": false,
+    // mocha
     "describe": false,
     "it": false,
-    "expect": false,
     "beforeEach": false,
-    "afterEach": false,
-    "spyOn": false
+    "afterEach": false
   }
 }

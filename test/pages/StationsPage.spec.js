@@ -2,15 +2,21 @@ import "../tabris-mock.js";
 import settings from "../../src/model/settings";
 import StationsPage from "../../src/pages/StationsPage.js";
 import { Page } from "tabris";
+import { expect } from "chai";
+import { stub } from "sinon";
 
 describe("StationsPage", function() {
 
+  let data;
+
   beforeEach(function() {
     settings.server = "SERVER";
-    spyOn(global, "fetch").and.returnValue(Promise.resolve({
-      json: () => ({
-      })
-    }));
+    data = {};
+    stub(global, "fetch", () => Promise.resolve({ json: () => data }));
+  });
+
+  afterEach(function() {
+    fetch.restore();
   });
 
   describe("create", function() {
@@ -22,17 +28,17 @@ describe("StationsPage", function() {
     });
 
     it("creates a page", function() {
-      expect(page).toEqual(jasmine.any(Page));
+      expect(page).to.be.instanceof(Page);
     });
 
     it("does not make any requests", function() {
-      expect(fetch).not.toHaveBeenCalled();
+      expect(fetch.called).not.to.be.ok;
     });
 
     it("requests stations on load", function() {
       page.load();
 
-      expect(fetch).toHaveBeenCalledWith("SERVER/files/stations");
+      expect(fetch.calledWith("SERVER/files/stations")).to.be.ok;
     });
 
   });

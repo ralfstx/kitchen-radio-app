@@ -1,6 +1,8 @@
 import "../tabris-mock";
 import settings from "../../src/model/settings";
 import { loadStations } from "../../src/model/server";
+import { expect } from "chai";
+import { stub } from "sinon";
 
 describe("Server", function() {
 
@@ -9,21 +11,26 @@ describe("Server", function() {
   beforeEach(function() {
     settings.serverUrl = "SERVER";
     data = [];
-    spyOn(global, "fetch").and.callFake(() => Promise.resolve({ json: () => data }));
+    stub(global, "fetch", () => Promise.resolve({ json: () => data }));
+  });
+
+  afterEach(function() {
+    fetch.restore();
   });
 
   describe("loadStations", function() {
 
     it("corrects to server URL", function(done) {
       loadStations().then(() => {
-        expect(fetch).toHaveBeenCalledWith("SERVER/files/stations");
-      }).then(done, done.fail);
+        expect(fetch.calledWith("SERVER/files/stations")).to.be.ok;
+        expect(fetch.calledOnce).to.be.ok;
+      }).then(done, done);
     });
 
     it("handles empty array", function(done) {
       loadStations().then(stations => {
-        expect(stations).toEqual([]);
-      }).then(done, done.fail);
+        expect(stations).to.eql([]);
+      }).then(done, done);
     });
 
   });
