@@ -1,6 +1,21 @@
 import player from "../model/player";
+import { getImage } from "../model/images";
 import { formatTime } from "../model/helpers";
-import { Page, Button, TextView, Slider, CollectionView } from "tabris";
+import { Page, Composite, ImageView, TextView, Slider, CollectionView } from "tabris";
+
+class ButtonBar extends Composite {
+
+  addButton(icon, command) {
+    new ImageView({
+      top: 4, left: "prev() 4", width: 48, height: 48,
+      image: getImage(icon + "_black_36dp"),
+      scaleMode: "none",
+      highlightOnTouch: true
+    }).on("tap", command).appendTo(this);
+    return this;
+  }
+
+}
 
 export default class PlaylistPage extends Page {
 
@@ -9,16 +24,13 @@ export default class PlaylistPage extends Page {
       title: "Player",
       topLevel: true
     });
-    createButton(player.prev, "<<").appendTo(this);
-    createButton(player.pause, "||").appendTo(this);
-    createButton(player.next, ">>").appendTo(this);
 
-    new Button({
-      layoutData: {top: 0, left: "prev()"},
-      text: "refresh"
-    }).on("select", () => {
-      this.updateStatus();
-    }).appendTo(this);
+    new ButtonBar({ left: 12, top: 12 })
+      .addButton("skip_previous", player.prev)
+      .addButton("pause", player.pause)
+      .addButton("skip_next", player.next)
+      .addButton("refresh", () => { this.updateStatus(); })
+      .appendTo(this);
 
     this._statusView = new TextView({
       layoutData: {left: 0, right: 0, top: "prev()"},
@@ -82,13 +94,6 @@ export default class PlaylistPage extends Page {
   _updateSong() {
   }
 
-}
-
-function createButton(cmd, text) {
-  return new Button({
-    layoutData: {top: 0, left: "prev()"},
-    text: text
-  }).on("select", cmd);
 }
 
 /*

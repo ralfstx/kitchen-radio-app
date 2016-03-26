@@ -1,6 +1,7 @@
 import "core-js/client/shim.min.js";
 
 import settings from "./model/settings";
+import { getImage } from "./model/images";
 import player from "./model/player";
 import AlbumsPage from "./pages/AlbumsPage.js";
 import PlaylistPage from "./pages/PlaylistPage.js";
@@ -16,7 +17,7 @@ new PlaylistPage();
 new SettingsPage();
 
 new Action({
-  "title": "Stop"
+  "image": getImage("stop_white_36dp")
 }).on("select", () => {
   player.stop();
 });

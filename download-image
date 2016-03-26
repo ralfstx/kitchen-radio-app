@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var path = require('path');
+var https = require('https');
+var AdmZip = require('adm-zip');
+
+var factors = {
+  mdpi: 1,
+  hdpi: 1.5,
+  xhdpi: 2,
+  xxhdpi: 3,
+  xxxhdpi: 4
+};
+
+var args = process.argv.slice(2);
+
+if (!args.length) {
+  console.error('Usage: download-image <name_color_dp>');
+}
+
+args.forEach(arg => {
+  if (arg.endsWith('.zip')) {
+    extractImages(arg);
+  } else {
+    downloadImages(arg);
+  }
+});
+
+function downloadImages(name) {
+  var file = `ic_${name}dp.zip`;
+  console.log('download', file);
+  var url = `https://storage.googleapis.com/material-icons/external-assets/v4/icons/zip/${file}`;
+  https.get(url, (res) => {
+    if (('' + res.statusCode).match(/^2\d\d$/)) {
+      var stream = fs.createWriteStream(file);
+      res.pipe(stream).on('finish', () => {
+        extractImages(file);
+      });
+    } else {
+      console.error(`HTTP Error ${res.statusCode}: ${res.statusMessage}`);
+    }
+  }).on('error', (err) => {
+    console.error(err);
+  });
+}
+
+function extractImages(file) {
+  var zip = new AdmZip(file);
+  zip.getEntries().forEach(entry => {
+    var re = /\/drawable-(\S+)\/ic_(\S+)\.png/.exec(entry.entryName);
+    if (re) {
+      var factor = factors[re[1]];
+      var name = re[2];
+      var target = path.join(`src/images`, `${name}@${factor}x.png`);
+      console.log('write', target);
+      fs.writeFileSync(target, entry.getData());
+    }
+  });
+}
