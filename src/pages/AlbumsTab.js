@@ -27,7 +27,8 @@ export default class AlbumsTab extends Tab {
 
   constructor() {
     super({
-      title: "Albums"
+      title: "Albums",
+      background: "white"
     });
     this._albums = [];
     this._filter = '';

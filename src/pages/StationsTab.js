@@ -23,7 +23,8 @@ export default class StationsTab extends Tab {
 
   constructor() {
     super({
-      title: "Stations"
+      title: "Stations",
+      background: "white"
     });
     this._stationsList = new CollectionView({
       layoutData: {left: 0, right: 0, top: 0, bottom: 0},

@@ -1,4 +1,5 @@
 import player from "../model/player";
+import { background } from '../model/colors';
 import { getImage } from '../model/images';
 import SettingsPage from './SettingsPage';
 import { Drawer as TbDrawer, Composite, TextView, ImageView } from "tabris";
@@ -21,18 +22,22 @@ export default class Drawer extends TbDrawer {
 
   constructor() {
     super();
-    new ButtonBar({ left: 12, top: 12 })
-      .addButton('skip_previous', () => player.prev())
-      .addButton('pause', () => player.pause())
-      .addButton('stop', () => player.stop())
-      .addButton('skip_next', () => player.next())
-      .addButton('refresh', () => player.status())
-      .appendTo(this);
-
-    this._statusView = new TextView({
-      left: 0, right: 0, top: 'prev()',
-      text: '...'
-    }).appendTo(this);
+    new Composite({
+      id: 'header',
+      left: 0, right: 0, top: 0, height: 120,
+      background: background
+    }).append([
+      new ImageView({
+        id: 'statusIcon',
+        left: 16, top: 16, width: 36, height: 36
+      }),
+      new TextView({
+        id: 'statusText',
+        left: 'prev() 12', top: 16, right: 16, height: 36,
+        font: '14px sans-serif',
+        textColor: 'white'
+      })
+    ]).appendTo(this);
 
     new TextView({
       left: 24, right: 16, top: 'prev() 16',
@@ -43,6 +48,14 @@ export default class Drawer extends TbDrawer {
       this.close();
     }).appendTo(this);
 
+    new ButtonBar({ centerX: 0, bottom: 16 })
+      .addButton('skip_previous', () => player.prev())
+      .addButton('pause', () => player.pause())
+      .addButton('stop', () => player.stop())
+      .addButton('skip_next', () => player.next())
+      .addButton('refresh', () => player.status())
+      .appendTo(this);
+
     player.on('status', (status) => {
       this._updateStatus(status);
     });
@@ -50,7 +63,14 @@ export default class Drawer extends TbDrawer {
   }
 
   _updateStatus(status) {
-    this._statusView.set('text', status.state);
+    let icons = {
+      play: 'play_arrow',
+      pause: 'pause'
+    };
+    var icon = status.state in icons ? getImage(icons[status.state] + '_white_24dp') : null;
+    this.apply({
+      '#statusIcon': {'image': icon}
+    });
   }
 
 }

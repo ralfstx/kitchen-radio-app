@@ -1,3 +1,4 @@
+import { background } from '../model/colors';
 import AlbumsTab from "./AlbumsTab.js";
 import StationsTab from "./StationsTab.js";
 import PlaylistTab from "./PlaylistTab.js";
@@ -13,7 +14,10 @@ export default class MainPage extends Page {
 
     new TabFolder({
       left: 0, top: 0, right: 0, bottom: 0,
-      paging: true
+      paging: true,
+      background: background,
+      textColor: 'white',
+      elevation: 2
     }).on('change:selection', (folder, tab) => {
       if (tab.load) {
         tab.load();

@@ -7,7 +7,8 @@ export default class PlaylistTab extends Tab {
 
   constructor() {
     super({
-      title: 'Playlist'
+      title: 'Playlist',
+      background: 'white'
     });
 
     this._slider = new Slider({
