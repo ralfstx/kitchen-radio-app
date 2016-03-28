@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-# See https://design.google.com/icons/
+// See https://design.google.com/icons/
 
 var fs = require('fs');
 var path = require('path');
