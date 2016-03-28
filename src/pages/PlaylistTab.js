@@ -1,41 +1,14 @@
 import player from '../model/player';
-import { getImage } from '../model/images';
 import { formatTime } from '../model/helpers';
-import { Page, Composite, ImageView, TextView, Slider, CollectionView } from 'tabris';
+import { Tab, TextView, Slider, CollectionView } from 'tabris';
 
-class ButtonBar extends Composite {
 
-  addButton(icon, command) {
-    new ImageView({
-      top: 4, left: 'prev() 4', width: 48, height: 48,
-      image: getImage(icon + '_black_36dp'),
-      scaleMode: 'none',
-      highlightOnTouch: true
-    }).on('tap', command).appendTo(this);
-    return this;
-  }
-
-}
-
-export default class PlaylistPage extends Page {
+export default class PlaylistTab extends Tab {
 
   constructor() {
     super({
-      title: 'Player',
-      topLevel: true
+      title: 'Playlist'
     });
-
-    new ButtonBar({ left: 12, top: 12 })
-      .addButton('skip_previous', () => player.prev())
-      .addButton('pause', () => player.pause())
-      .addButton('skip_next', () => player.next())
-      .addButton('refresh', () => player.status())
-      .appendTo(this);
-
-    this._statusView = new TextView({
-      left: 0, right: 0, top: 'prev()',
-      text: '...'
-    }).appendTo(this);
 
     this._slider = new Slider({
       left: 0, right: 0, top: ['prev()', 5],
@@ -68,8 +41,11 @@ export default class PlaylistPage extends Page {
     player.on('playlist', (playlist) => this._updatePlaylist(playlist));
   }
 
+  load() {
+    player.status();
+  }
+
   _updateStatus(status) {
-    this._statusView.set('text', status.state);
     if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
       this._slider.set({maximum: status.totalTime, selection: status.elapsedTime});
     }

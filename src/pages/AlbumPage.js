@@ -1,6 +1,6 @@
 import player from "../model/player";
 import { formatTime } from "../model/helpers";
-import { Page, Button, TextView, ImageView, CollectionView } from "tabris";
+import { Page, Button, TextView, ImageView, CollectionView, ui } from "tabris";
 
 export default class AlbumPage extends Page {
 
@@ -8,6 +8,11 @@ export default class AlbumPage extends Page {
     super();
     this.on("change:bounds", () => {
       this.layout();
+    });
+    this.on('appear', () => {
+      ui.set('toolbarVisible', true);
+    }).on('disappear', () => {
+      ui.set('toolbarVisible', false);
     });
     let coverSize = Math.min(screen.width, screen.height);
     this._trackListView = new CollectionView({

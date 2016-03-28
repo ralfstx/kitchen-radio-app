@@ -2,7 +2,7 @@ import settings from "../model/settings";
 import player from "../model/player";
 import { splice } from "../model/helpers";
 import { loadStations } from "../model/server.js";
-import { Page, CollectionView, ImageView } from "tabris";
+import { Tab, CollectionView, ImageView } from "tabris";
 
 function stationView(properties) {
   return new ImageView(Object.assign({
@@ -19,12 +19,11 @@ function stationView(properties) {
   });
 }
 
-export default class StationsPage extends Page {
+export default class StationsTab extends Tab {
 
   constructor() {
     super({
-      title: "Radio Stations",
-      topLevel: true
+      title: "Stations"
     });
     this._stationsList = new CollectionView({
       layoutData: {left: 0, right: 0, top: 0, bottom: 0},
@@ -44,9 +43,12 @@ export default class StationsPage extends Page {
   }
 
   load() {
-    loadStations().then(stations => {
-      this._stationsList.set("items", splice(stations));
-    });
+    if (!this._loaded) {
+      loadStations().then(stations => {
+        this._loaded = true;
+        this._stationsList.set("items", splice(stations));
+      });
+    }
   }
 
 }

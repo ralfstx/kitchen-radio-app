@@ -3,7 +3,7 @@ import settings from "../model/settings";
 import { splice } from "../model/helpers";
 import { loadAlbums, loadAlbum } from "../model/server";
 import AlbumPage from "./AlbumPage";
-import { Page, TextInput, ImageView, CollectionView } from "tabris";
+import { Tab, TextInput, ImageView, CollectionView } from "tabris";
 
 function albumView(properties) {
   return new ImageView(Object.assign({
@@ -23,12 +23,11 @@ function albumView(properties) {
   });
 }
 
-export default class AlbumsPage extends Page {
+export default class AlbumsTab extends Tab {
 
   constructor() {
     super({
-      title: "Collection",
-      topLevel: true
+      title: "Albums"
     });
     this._albums = [];
     this._filter = '';
@@ -56,13 +55,18 @@ export default class AlbumsPage extends Page {
     settings.on("change:serverUrl", () => {
       this.load();
     });
+    // TODO load on appear when this exists on a Tab
+    this.load();
   }
 
   load() {
-    loadAlbums().then(albums => {
-      this._albums = albums;
-      this.update();
-    });
+    if (!this._loaded) {
+      loadAlbums().then(albums => {
+        this._loaded = true;
+        this._albums = albums;
+        this.update();
+      });
+    }
   }
 
   update() {
