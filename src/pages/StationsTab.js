@@ -29,6 +29,7 @@ export default class StationsTab extends Tab {
     this._stationsList = new CollectionView({
       layoutData: {left: 0, right: 0, top: 0, bottom: 0},
       itemHeight: 88,
+      refreshEnabled: true,
       initializeCell: cell => {
         let view1 = stationView({ left: 8, top: 4, right: "50% 4", height: 80 }).appendTo(cell);
         let view2 = stationView({ left: "50% 4", top: 4, right: 8, height: 80 }).appendTo(cell);
@@ -37,15 +38,19 @@ export default class StationsTab extends Tab {
           view2.set("station", item[1]);
         });
       }
+    }).on('refresh', (view) => {
+      this.load(true).then(() => {
+        view.set('refreshindicator', false);
+      });
     }).appendTo(this);
     settings.on("change:serverUrl", () => {
-      this.load();
+      this.load(true);
     });
   }
 
-  load() {
-    if (!this._loaded) {
-      loadStations().then(stations => {
+  load(force) {
+    if (force || !this._loaded) {
+      return loadStations().then(stations => {
         this._loaded = true;
         this._stationsList.set("items", splice(stations));
       });

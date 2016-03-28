@@ -42,6 +42,7 @@ export default class AlbumsTab extends Tab {
     this._albumsList = new CollectionView({
       left: 0, right: 0, top: "prev()", bottom: 0,
       itemHeight: 132,
+      refreshEnabled: true,
       initializeCell: cell => {
         let view1 = albumView({ left: 12, top: 4, width: 124, height: 124 }).appendTo(cell);
         let view2 = albumView({ left: 144, top: 4, width: 124, height: 124 }).appendTo(cell);
@@ -52,17 +53,21 @@ export default class AlbumsTab extends Tab {
           view3.set("album", row[2]);
         });
       }
+    }).on('refresh', (view) => {
+      this.load(true).then(() => {
+        view.set('refreshIndicator', false);
+      });
     }).appendTo(this);
     settings.on("change:serverUrl", () => {
-      this.load();
+      this.load(true);
     });
     // TODO load on appear when this exists on a Tab
     this.load();
   }
 
-  load() {
-    if (!this._loaded) {
-      loadAlbums().then(albums => {
+  load(force) {
+    if (force || !this._loaded) {
+      return loadAlbums().then(albums => {
         this._loaded = true;
         this._albums = albums;
         this.update();
