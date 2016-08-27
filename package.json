@@ -11,6 +11,7 @@
     "build:ios": "rm -rf build/ && cp babel-ios.json .babelrc && babel --copy-files --out-dir build/ src/",
     "build:android": "rm -rf build/ && cp babel-android.json .babelrc && babel --copy-files --out-dir build/ src/",
     "test": "cp babel-test.json .babelrc && mocha --compilers js:babel-core/register 'test/**/*.spec.js'",
+    "lint": "eslint .",
     "start": "hs -c-1"
   },
   "dependencies": {
@@ -19,9 +20,10 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.6.0",
-    "babel-preset-es2015": "^6.5.0",
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0",
     "chai": "^3.5.0",
+    "eslint": "^3.4.0",
     "mocha": "^2.4.5",
     "sinon": "^1.17.3"
   }

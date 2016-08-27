@@ -1,10 +1,10 @@
 import 'core-js/client/shim.min.js';
 
-import { background } from './model/colors';
+import {background} from './model/colors';
 import settings from './model/settings';
 import MainPage from './pages/MainPage';
 import Drawer from './pages/Drawer';
-import { ui } from 'tabris';
+import {ui} from 'tabris';
 
 settings.load();
 

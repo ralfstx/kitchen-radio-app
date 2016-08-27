@@ -1,6 +1,6 @@
 import settings from './settings';
-import { mixin } from './helpers';
-import { Events } from 'tabris';
+import {mixin} from './helpers';
+import {Events} from 'tabris';
 
 class Player {
 

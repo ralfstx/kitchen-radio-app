@@ -1,7 +1,7 @@
 import player from '../model/player';
-import { getImage } from '../model/images';
-import { formatTime } from '../model/helpers';
-import { Page, TextView, ImageView, CollectionView, ui } from 'tabris';
+import {getImage} from '../model/images';
+import {formatTime} from '../model/helpers';
+import {Page, TextView, ImageView, CollectionView, ui} from 'tabris';
 
 export default class AlbumPage extends Page {
 
@@ -22,11 +22,11 @@ export default class AlbumPage extends Page {
       initializeCell: (cell, type) => {
         if (type === 'album') {
           return createAlbumCell(cell);
-        } else if (type === 'track') {
-          return createTrackCell(cell);
-        } else {
-          return createSectionCell(cell);
         }
+        if (type === 'track') {
+          return createTrackCell(cell);
+        }
+        return createSectionCell(cell);
       }
     }).appendTo(this);
   }

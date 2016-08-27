@@ -1,5 +1,5 @@
-import { Events } from "tabris";
-import { mixin } from "./helpers";
+import {Events} from 'tabris';
+import {mixin} from './helpers';
 
 const store = {};
 
@@ -11,12 +11,12 @@ class Settings {
 
   set serverUrl(url) {
     store.serverUrl = url;
-    localStorage.setItem("serverUrl", url);
-    this.trigger("change:serverUrl");
+    localStorage.setItem('serverUrl', url);
+    this.trigger('change:serverUrl');
   }
 
   load() {
-    store.serverUrl = localStorage.getItem("serverUrl") || "http://192.168.1.";
+    store.serverUrl = localStorage.getItem('serverUrl') || 'http://192.168.1.';
   }
 
 }

@@ -1,65 +1,65 @@
-import { splice, mixin } from "../../src/model/helpers.js";
-import { expect } from "chai";
+import {splice, mixin} from '../../src/model/helpers.js';
+import {expect} from 'chai';
 
-describe("helpers", function() {
+describe('helpers', function() {
 
-  describe("splice", function() {
+  describe('splice', function() {
 
-    it("throws with columns = 0", function() {
+    it('throws with columns = 0', function() {
       expect(() => splice([], 0)).to.throw();
     });
 
-    it("fails with negative # of columns", function() {
+    it('fails with negative # of columns', function() {
       expect(() => splice([], -1)).to.throw();
     });
 
-    describe("with 1 col,", function() {
+    describe('with 1 col,', function() {
 
-      it("empty array", function() {
+      it('empty array', function() {
         expect(splice([], 1)).to.eql([]);
       });
 
-      it("1 element", function() {
+      it('1 element', function() {
         expect(splice([1], 1)).to.eql([[1]]);
       });
 
-      it("2 elements", function() {
+      it('2 elements', function() {
         expect(splice([1, 2], 1)).to.eql([[1], [2]]);
       });
 
     });
 
-    describe("with 2 col (default),", function() {
+    describe('with 2 col (default),', function() {
 
-      it("empty array", function() {
+      it('empty array', function() {
         expect(splice([])).to.eql([]);
       });
 
-      it("1 element", function() {
+      it('1 element', function() {
         expect(splice([1])).to.eql([[1]]);
       });
 
-      it("2 elements", function() {
+      it('2 elements', function() {
         expect(splice([1, 2])).to.eql([[1, 2]]);
       });
 
-      it("3 elements", function() {
+      it('3 elements', function() {
         expect(splice([1, 2, 3])).to.eql([[1, 2], [3]]);
       });
 
     });
 
-    describe("with 3 cols,", function() {
+    describe('with 3 cols,', function() {
 
-      it("empty array", function() {
+      it('empty array', function() {
         expect(splice([], 3)).to.eql([]);
       });
 
-      it("3 elements", function() {
+      it('3 elements', function() {
         expect(splice([1, 2, 3], 3)).to.eql([[1, 2, 3]]);
       });
 
-      it("4 elements", function() {
+      it('4 elements', function() {
         expect(splice([1, 2, 3, 4], 3)).to.eql([[1, 2, 3], [4]]);
       });
 
@@ -67,13 +67,13 @@ describe("helpers", function() {
 
   });
 
-  describe("mixin", function() {
+  describe('mixin', function() {
 
     it("throws if target doesn't have prototype", function() {
       expect(() => mixin({}, {})).to.throw();
     });
 
-    it("works with plain objects", function() {
+    it('works with plain objects', function() {
       class Target {}
       let Mixin = {
         get foo() { return this._foo * 2; },
@@ -87,7 +87,7 @@ describe("helpers", function() {
       expect(target.foo).to.equal(48);
     });
 
-    it("works with classes", function() {
+    it('works with classes', function() {
       class Target {}
       class Mixin {
         get foo() { return this._foo * 2; }
@@ -101,7 +101,7 @@ describe("helpers", function() {
       expect(target.foo).to.equal(48);
     });
 
-    it("skips constructors", function() {
+    it('skips constructors', function() {
       class Target {
         constructor() { this._foo = 23; }
       }

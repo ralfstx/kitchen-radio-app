@@ -1,10 +1,10 @@
-import { device } from "tabris";
+import {device} from 'tabris';
 
 const supportedRatios = [1, 1.5, 2, 3, 4];
 
 export function getImage(name, width, height) {
   let scale = getScale();
-  let image = { src: `src/images/${name}@${scale}x.png` };
+  let image = {src: `src/images/${name}@${scale}x.png`};
   if (width && height) {
     image.width = width;
     image.height = height;
@@ -15,7 +15,7 @@ export function getImage(name, width, height) {
 }
 
 function getScale() {
-  let scale = device.get("scaleFactor");
+  let scale = device.get('scaleFactor');
   return supportedRatios.reduce((prev, curr) => fit(prev, scale) > fit(curr, scale) ? prev : curr);
 }
 

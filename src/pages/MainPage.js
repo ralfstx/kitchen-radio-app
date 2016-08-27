@@ -1,8 +1,8 @@
-import { background } from '../model/colors';
-import AlbumsTab from "./AlbumsTab.js";
-import StationsTab from "./StationsTab.js";
-import PlaylistTab from "./PlaylistTab.js";
-import { Page, TabFolder } from "tabris";
+import {background} from '../model/colors';
+import AlbumsTab from './AlbumsTab.js';
+import StationsTab from './StationsTab.js';
+import PlaylistTab from './PlaylistTab.js';
+import {Page, TabFolder} from 'tabris';
 
 
 export default class MainPage extends Page {

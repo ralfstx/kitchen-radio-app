@@ -67,7 +67,7 @@ export class Album {
   }
 
   get coverUrl() {
-    return this.url + "/cover-250.jpg";
+    return this.url + '/cover-250.jpg';
   }
 
 }

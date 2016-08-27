@@ -1,6 +1,6 @@
 import player from '../model/player';
-import { formatTime } from '../model/helpers';
-import { Tab, TextView, Slider, CollectionView } from 'tabris';
+import {formatTime} from '../model/helpers';
+import {Tab, TextView, Slider, CollectionView} from 'tabris';
 
 
 export default class PlaylistTab extends Tab {
@@ -36,7 +36,7 @@ export default class PlaylistTab extends Tab {
       }
     }).appendTo(this);
 
-    this.on('appear', () => player.status() );
+    this.on('appear', () => player.status());
 
     player.on('status', (status) => this._updateStatus(status));
     player.on('playlist', (playlist) => this._updatePlaylist(playlist));

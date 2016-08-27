@@ -1,8 +1,8 @@
-import player from "../model/player";
-import { background } from '../model/colors';
-import { getImage } from '../model/images';
+import player from '../model/player';
+import {background} from '../model/colors';
+import {getImage} from '../model/images';
 import SettingsPage from './SettingsPage';
-import { Drawer as TbDrawer, Composite, TextView, ImageView } from "tabris";
+import {Drawer as TbDrawer, Composite, TextView, ImageView} from 'tabris';
 
 class ButtonBar extends Composite {
 
@@ -48,7 +48,7 @@ export default class Drawer extends TbDrawer {
       this.close();
     }).appendTo(this);
 
-    new ButtonBar({ centerX: 0, bottom: 16 })
+    new ButtonBar({centerX: 0, bottom: 16})
       .addButton('skip_previous', () => player.prev())
       .addButton('pause', () => player.pause())
       .addButton('stop', () => player.stop())
@@ -67,7 +67,7 @@ export default class Drawer extends TbDrawer {
       play: 'play_arrow',
       pause: 'pause'
     };
-    var icon = status.state in icons ? getImage(icons[status.state] + '_white_24dp') : null;
+    let icon = status.state in icons ? getImage(icons[status.state] + '_white_24dp') : null;
     this.apply({
       '#statusIcon': {'image': icon}
     });

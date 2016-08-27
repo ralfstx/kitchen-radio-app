@@ -1,13 +1,13 @@
 /*global window: true */
 
-if (typeof window === "undefined") {
+if (typeof window === 'undefined') {
   global.window = global;
 }
-if (typeof fetch === "undefined") {
+if (typeof fetch === 'undefined') {
   global.fetch = function() {};
 }
 
-require("tabris");
+require('tabris');
 
 let ClientSpy = function() {
 };
