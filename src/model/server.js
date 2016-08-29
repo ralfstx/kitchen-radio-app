@@ -1,8 +1,9 @@
 import settings from './settings';
 import {Album} from './album';
+import {fetch} from '../lib/fetch';
 
 export function loadStations() {
-  return fetch(settings.serverUrl + '/files/stations')
+  return get('/files/stations')
     .then(rsp => rsp.json())
     .then(stations => stations.map(station => ({
       name: station.name,
@@ -13,7 +14,7 @@ export function loadStations() {
 }
 
 export function loadAlbums() {
-  return fetch(settings.serverUrl + '/files/albums')
+  return get('/files/albums')
     .then(resp => resp.json())
     .then(albums => albums.map(album => {
       album.coverUrl = settings.serverUrl + '/files/albums/' + album.path + '/cover-100.jpg';
@@ -22,8 +23,17 @@ export function loadAlbums() {
 }
 
 export function loadAlbum(path) {
-  let url = settings.serverUrl + '/files/albums/' + path;
-  return fetch(url)
+  return get('/files/albums/' + path)
     .then(resp => resp.json())
-    .then(data => new Album(url, data));
+    .then(data => new Album(settings.serverUrl + '/files/albums/' + path, data));
+}
+
+function get(path) {
+  return fetch(settings.serverUrl + path, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  }).catch(err => {
+    console.error(err);
+  });
 }

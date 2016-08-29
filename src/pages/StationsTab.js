@@ -40,7 +40,7 @@ export default class StationsTab extends Tab {
       }
     }).on('refresh', (view) => {
       this.load(true).then(() => {
-        view.set('refreshindicator', false);
+        view.set('refreshIndicator', false);
       });
     }).appendTo(this);
     settings.on('change:serverUrl', () => {
@@ -51,8 +51,10 @@ export default class StationsTab extends Tab {
   load(force) {
     if (force || !this._loaded) {
       return loadStations().then(stations => {
-        this._loaded = true;
-        this._stationsList.set('items', splice(stations));
+        if (stations) {
+          this._loaded = true;
+          this._stationsList.set('items', splice(stations));
+        }
       });
     }
   }

@@ -68,9 +68,11 @@ export default class AlbumsTab extends Tab {
   load(force) {
     if (force || !this._loaded) {
       return loadAlbums().then(albums => {
-        this._loaded = true;
-        this._albums = albums;
-        this.update();
+        if (albums) {
+          this._loaded = true;
+          this._albums = albums;
+          this.update();
+        }
       });
     }
   }

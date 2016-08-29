@@ -1,6 +1,8 @@
+import {Events} from 'tabris';
+
+import {fetch} from '../lib/fetch';
 import settings from './settings';
 import {mixin} from './helpers';
-import {Events} from 'tabris';
 
 class Player {
 
@@ -96,6 +98,8 @@ function get(path) {
     headers: {
       'Accept': 'application/json'
     }
+  }).catch(err => {
+    console.error(err);
   });
 }
 
@@ -107,6 +111,8 @@ function post(cmd, body) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(body)
+  }).catch(err => {
+    console.error(err);
   });
 }
 
