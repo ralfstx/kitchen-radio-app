@@ -16,7 +16,7 @@ class Settings {
   }
 
   load() {
-    store.serverUrl = localStorage.getItem('serverUrl') || 'http://192.168.1.';
+    store.serverUrl = localStorage.getItem('serverUrl') || 'http://192.168.1.1';
   }
 
 }
