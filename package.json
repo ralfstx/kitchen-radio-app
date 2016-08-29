@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "build:ios": "rm -rf build/ && cp babel-ios.json .babelrc && babel --copy-files --out-dir build/ src/",
-    "build:android": "rm -rf build/ && cp babel-android.json .babelrc && babel --copy-files --out-dir build/ src/",
+    "build:ios": "rm -rf build/ && BABEL_ENV=ios babel --copy-files --out-dir build/ src/",
+    "build:android": "rm -rf build/ && BABEL_ENV=android babel --copy-files --out-dir build/ src/",
     "test": "cp babel-test.json .babelrc && mocha --compilers js:babel-core/register 'test/**/*.spec.js'",
     "lint": "eslint .",
     "start": "hs -c-1"

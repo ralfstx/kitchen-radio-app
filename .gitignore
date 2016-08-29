@@ -1,6 +1,5 @@
 .settings/
 .project
-.babelrc
 build/
 node_modules/
 cordova/hooks/
