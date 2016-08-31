@@ -68,7 +68,7 @@ function createAlbumCell(cell) {
     background: 'rgba(45, 163, 47, 0.75)',
     elevation: 4,
     image: getImage('play_circle_filled_black_48dp')
-  }).on('select', () => {
+  }).on('tap', () => {
     let album = cell.get('item');
     player.play(album.tracks);
   }).appendTo(cell);
