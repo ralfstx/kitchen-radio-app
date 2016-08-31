@@ -1,6 +1,5 @@
 import _ from 'underscore';
 import settings from '../model/settings';
-import {splice} from '../model/helpers';
 import {loadAlbums, loadAlbum} from '../model/server';
 import AlbumPage from './AlbumPage';
 import {Tab, TextInput, ImageView, CollectionView} from 'tabris';
@@ -8,8 +7,7 @@ import {Tab, TextInput, ImageView, CollectionView} from 'tabris';
 function albumView(properties) {
   return new ImageView(Object.assign({
     scaleMode: 'fill',
-    background: 'white',
-    elevation: 2
+    background: 'white'
   }, properties)).on('change:album', (view, album) => {
     view.set('image', album ? {src: album.coverUrl, width: 250, height: 250} : null);
   }).on('tap', view => {
@@ -42,15 +40,12 @@ export default class AlbumsTab extends Tab {
     this._albumsList = new CollectionView({
       left: 0, right: 0, top: 'prev()', bottom: 0,
       itemHeight: 132,
+      columnCount: 3,
       refreshEnabled: true,
       initializeCell: cell => {
-        let view1 = albumView({left: 12, top: 4, width: 124, height: 124}).appendTo(cell);
-        let view2 = albumView({left: 144, top: 4, width: 124, height: 124}).appendTo(cell);
-        let view3 = albumView({left: 276, top: 4, width: 124, height: 124}).appendTo(cell);
-        cell.on('change:item', (view, row) => {
-          view1.set('album', row[0]);
-          view2.set('album', row[1]);
-          view3.set('album', row[2]);
+        let view = albumView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
+        cell.on('change:item', (cell, item) => {
+          view.set('album', item);
         });
       }
     }).on('refresh', (view) => {
@@ -58,6 +53,14 @@ export default class AlbumsTab extends Tab {
         view.set('refreshIndicator', false);
       });
     }).appendTo(this);
+    this.on('resize', function(widget, bounds) {
+      let columns = Math.round(bounds.width / 132);
+      let size = Math.round(bounds.width / columns);
+      this._albumsList.set({
+        columnCount: columns,
+        itemHeight: size
+      });
+    });
     settings.on('change:serverUrl', () => {
       this.load(true);
     });
@@ -81,9 +84,9 @@ export default class AlbumsTab extends Tab {
     let filter = this._filter.toLowerCase();
     if (filter) {
       let match = album => (album.name || '').toLowerCase().indexOf(filter) !== -1;
-      this._albumsList.set('items', splice(this._albums.filter(match), 3));
+      this._albumsList.set('items', this._albums.filter(match));
     } else {
-      this._albumsList.set('items', splice(_.shuffle(this._albums), 3));
+      this._albumsList.set('items', _.shuffle(this._albums));
     }
   }
 

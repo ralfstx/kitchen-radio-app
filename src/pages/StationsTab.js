@@ -1,14 +1,12 @@
 import settings from '../model/settings';
 import player from '../model/player';
-import {splice} from '../model/helpers';
 import {loadStations} from '../model/server.js';
 import {Tab, CollectionView, ImageView} from 'tabris';
 
 function stationView(properties) {
   return new ImageView(Object.assign({
     scaleMode: 'fill',
-    background: 'white',
-    elevation: 2
+    background: 'white'
   }, properties)).on('change:station', (view, station) => {
     view.set('image', station ? {src: station.iconUrl, width: 300, height: 300} : null);
   }).on('tap', view => {
@@ -29,13 +27,12 @@ export default class StationsTab extends Tab {
     this._stationsList = new CollectionView({
       layoutData: {left: 0, right: 0, top: 0, bottom: 0},
       itemHeight: 88,
+      columnCount: 2,
       refreshEnabled: true,
       initializeCell: cell => {
-        let view1 = stationView({left: 8, top: 4, right: '50% 4', height: 80}).appendTo(cell);
-        let view2 = stationView({left: '50% 4', top: 4, right: 8, height: 80}).appendTo(cell);
-        cell.on('change:item', (view, item) => {
-          view1.set('station', item[0]);
-          view2.set('station', item[1]);
+        let view = stationView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
+        cell.on('change:item', (cell, item) => {
+          view.set('station', item);
         });
       }
     }).on('refresh', (view) => {
@@ -43,6 +40,14 @@ export default class StationsTab extends Tab {
         view.set('refreshIndicator', false);
       });
     }).appendTo(this);
+    this.on('resize', function(widget, bounds) {
+      let columns = Math.round(bounds.width / 200);
+      let size = Math.round(bounds.width / columns * 0.4);
+      this._stationsList.set({
+        columnCount: columns,
+        itemHeight: size
+      });
+    });
     settings.on('change:serverUrl', () => {
       this.load(true);
     });
@@ -53,7 +58,7 @@ export default class StationsTab extends Tab {
       return loadStations().then(stations => {
         if (stations) {
           this._loaded = true;
-          this._stationsList.set('items', splice(stations));
+          this._stationsList.set('items', stations);
         }
       });
     }
