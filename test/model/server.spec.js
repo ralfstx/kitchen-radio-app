@@ -22,7 +22,7 @@ describe('Server', function() {
 
     it('corrects to server URL', function(done) {
       loadStations().then(() => {
-        expect(fetch.calledWith('SERVER/files/stations')).to.be.ok;
+        expect(fetch.calledWith('SERVER/stations')).to.be.ok;
         expect(fetch.calledOnce).to.be.ok;
       }).then(done, done);
     });

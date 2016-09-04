@@ -31,10 +31,6 @@ describe('Album', function() {
       expect(album.tracks).to.eql([]);
     });
 
-    it('coverUrl includes url', function() {
-      expect(album.coverUrl).to.match(/^URL/);
-    });
-
   });
 
   describe('when created with single-disc data', function() {
@@ -110,10 +106,6 @@ describe('Album', function() {
 
     it('track contains url', function() {
       expect(album.tracks[0].url).to.equal('URL/01.ogg');
-    });
-
-    it('coverUrl includes url', function() {
-      expect(album.coverUrl).to.match(/^URL/);
     });
 
   });

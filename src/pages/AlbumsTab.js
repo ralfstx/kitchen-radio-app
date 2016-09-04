@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import settings from '../model/settings';
-import {loadAlbums, loadAlbum} from '../model/server';
+import {loadAlbums, loadAlbum, getCoverUrl} from '../model/server';
 import AlbumPage from './AlbumPage';
 import {Tab, TextInput, ImageView, CollectionView} from 'tabris';
 
@@ -9,12 +9,14 @@ function albumView(properties) {
     scaleMode: 'fill',
     background: 'white'
   }, properties)).on('change:album', (view, album) => {
-    view.set('image', album ? {src: album.coverUrl, width: 250, height: 250} : null);
+    view.set('image', album ? {src: getCoverUrl(album, 250), width: 250, height: 250} : null);
   }).on('tap', view => {
     let album = view.get('album');
     if (album) {
       let page = new AlbumPage().open();
-      loadAlbum(album.path).then(album => {
+      let path = album.path;
+      loadAlbum(path).then(album => {
+        album.path = path;
         page.album = album;
       });
     }

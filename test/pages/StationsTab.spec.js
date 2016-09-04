@@ -38,7 +38,7 @@ describe('StationsTab', function() {
     it('requests stations on load', function() {
       tab.load();
 
-      expect(fetch.calledWith('SERVER/files/stations')).to.be.ok;
+      expect(fetch.calledWith('SERVER/stations')).to.be.ok;
     });
 
   });

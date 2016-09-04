@@ -3,29 +3,27 @@ import {Album} from './album';
 import {fetch} from '../lib/fetch';
 
 export function loadStations() {
-  return get('/files/stations')
+  return get('/stations')
     .then(rsp => rsp.json())
-    .then(stations => stations.map(station => ({
-      name: station.name,
-      www: station.www,
+    .then(stations => stations.map(station => Object.assign(station, {
       url: station.stream,
-      iconUrl: settings.serverUrl + '/files/stations/' + station.icon
+      iconUrl: settings.serverUrl + '/stations/' + station.id + '/image'
     })));
 }
 
 export function loadAlbums() {
-  return get('/files/albums')
-    .then(resp => resp.json())
-    .then(albums => albums.map(album => {
-      album.coverUrl = settings.serverUrl + '/files/albums/' + album.path + '/cover-100.jpg';
-      return album;
-    }));
+  return get('/albums').then(resp => resp.json());
 }
 
-export function loadAlbum(path) {
-  return get('/files/albums/' + path)
+export function getCoverUrl(album, size) {
+  let url = settings.serverUrl + '/albums/' + album.path + '/cover';
+  return size ? url + '?size=' + size : url;
+}
+
+export function loadAlbum(id) {
+  return get('/albums/' + id)
     .then(resp => resp.json())
-    .then(data => new Album(settings.serverUrl + '/files/albums/' + path, data));
+    .then(data => new Album(settings.serverUrl + '/albums/' + id, data));
 }
 
 function get(path) {

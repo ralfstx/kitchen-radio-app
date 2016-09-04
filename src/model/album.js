@@ -3,7 +3,6 @@ export class Track {
 
   constructor(disc, data) {
     this.disc = disc;
-    this.path  = data.path || '';
     this.title  = data.title || '';
     this.artist = data.artist || '';
     this.length = data.length || 0;
@@ -18,7 +17,7 @@ export class Track {
   }
 
   get url() {
-    return this.disc ? this.path ? this.disc.url + '/' + encodeURIComponent(this.path) : this.disc.url : '';
+    return this.disc ? this.disc.url + '/tracks/' + this.number : '';
   }
 
 }
@@ -27,7 +26,6 @@ export class Disc {
 
   constructor(album, data = {}) {
     this.album = album;
-    this.path  = data.path || '';
     this.title  = data.title || '';
     this.artist = data.artist || '';
     this.tracks = data.tracks ? data.tracks.map(track => new Track(this, track)) : [];
@@ -38,7 +36,7 @@ export class Disc {
   }
 
   get url() {
-    return this.album ? this.path ? this.album.url + '/' + encodeURIComponent(this.path) : this.album.url : '';
+    return this.album ? this.album.url + '/discs/' + this.number : '';
   }
 
 }
@@ -64,10 +62,6 @@ export class Album {
 
   get tracks() {
     return this.discs.reduce((tracks, disc) => tracks.concat(disc.tracks), []);
-  }
-
-  get coverUrl() {
-    return this.url + '/cover-250.jpg';
   }
 
 }

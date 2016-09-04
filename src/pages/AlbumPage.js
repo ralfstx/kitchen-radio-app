@@ -1,4 +1,5 @@
 import player from '../model/player';
+import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {formatTime} from '../model/helpers';
 import {Page, TextView, ImageView, CollectionView, ui} from 'tabris';
@@ -73,7 +74,7 @@ function createAlbumCell(cell) {
     player.play(album.tracks);
   }).appendTo(cell);
   cell.on('change:item', (cell, album) => {
-    coverView.set('image', {src: album.url + '/cover-250.jpg', width: 250, height: 250});
+    coverView.set('image', {src: getCoverUrl(album), width: 250, height: 250});
   });
 }
 
@@ -95,7 +96,7 @@ function createTrackCell(cell) {
   }).appendTo(cell);
   cell.on('change:item', (cell, track) => {
     numberView.set('text', track.number);
-    titleView.set('text', track.title || track.path);
+    titleView.set('text', track.title);
     timeView.set('text', formatTime(track.length));
   }).on('tap', () => {
     let track = cell.get('item');
