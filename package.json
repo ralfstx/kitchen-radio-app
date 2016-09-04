@@ -8,11 +8,13 @@
   },
   "license": "MIT",
   "scripts": {
-    "build:ios": "rm -rf build/ && BABEL_ENV=ios babel --copy-files --out-dir build/ src/",
-    "build:android": "rm -rf build/ && BABEL_ENV=android babel --copy-files --out-dir build/ src/",
-    "test": "cp babel-test.json .babelrc && mocha --compilers js:babel-core/register 'test/**/*.spec.js'",
+    "build:ios": "BABEL_ENV=ios npm run dist",
+    "build:android": "BABEL_ENV=android npm run dist",
+    "dist": "rm -rf build/ && babel --copy-files --out-dir build/ src/",
+    "test": "mocha --compilers js:babel-core/register 'test/**/*.spec.js'",
     "lint": "eslint .",
-    "start": "hs -c-1"
+    "server": "hs -c-1",
+    "start": "npm run dist && npm run server"
   },
   "dependencies": {
     "core-js": "^2.2.1",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
     "chai": "^3.5.0",
     "eslint": "^3.4.0",
