@@ -98,7 +98,6 @@ mixin(Player, Events);
 export default new Player();
 
 function get(path) {
-  console.log('GET', path);
   return fetch(settings.serverUrl + '/player/' + path, {
     headers: {
       'Accept': 'application/json'
@@ -109,7 +108,6 @@ function get(path) {
 }
 
 function post(cmd, body) {
-  console.log('POST', cmd);
   return fetch(settings.serverUrl + '/player/' + cmd, {
     method: 'post',
     headers: {

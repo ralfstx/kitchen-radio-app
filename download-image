@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // See https://design.google.com/icons/
 
-var fs = require('fs');
-var path = require('path');
-var https = require('https');
-var AdmZip = require('adm-zip');
+let fs = require('fs');
+let path = require('path');
+let https = require('https');
+let AdmZip = require('adm-zip');
 
-var factors = {
+let factors = {
   mdpi: 1,
   hdpi: 1.5,
   xhdpi: 2,
@@ -14,7 +14,7 @@ var factors = {
   xxxhdpi: 4
 };
 
-var args = process.argv.slice(2);
+let args = process.argv.slice(2);
 
 if (!args.length) {
   console.error('Usage: download-image <name_color_dp>');
@@ -29,12 +29,12 @@ args.forEach(arg => {
 });
 
 function downloadImages(name) {
-  var file = `ic_${name}dp.zip`;
+  let file = `ic_${name}dp.zip`;
   console.log('download', file);
-  var url = `https://storage.googleapis.com/material-icons/external-assets/v4/icons/zip/${file}`;
+  let url = `https://storage.googleapis.com/material-icons/external-assets/v4/icons/zip/${file}`;
   https.get(url, (res) => {
     if (('' + res.statusCode).match(/^2\d\d$/)) {
-      var stream = fs.createWriteStream(file);
+      let stream = fs.createWriteStream(file);
       res.pipe(stream).on('finish', () => {
         extractImages(file);
       });
@@ -47,13 +47,13 @@ function downloadImages(name) {
 }
 
 function extractImages(file) {
-  var zip = new AdmZip(file);
+  let zip = new AdmZip(file);
   zip.getEntries().forEach(entry => {
-    var re = /\/drawable-(\S+)\/ic_(\S+)\.png/.exec(entry.entryName);
+    let re = /\/drawable-(\S+)\/ic_(\S+)\.png/.exec(entry.entryName);
     if (re) {
-      var factor = factors[re[1]];
-      var name = re[2];
-      var target = path.join(`src/images`, `${name}@${factor}x.png`);
+      let factor = factors[re[1]];
+      let name = re[2];
+      let target = path.join('src/images', `${name}@${factor}x.png`);
       console.log('write', target);
       fs.writeFileSync(target, entry.getData());
     }
