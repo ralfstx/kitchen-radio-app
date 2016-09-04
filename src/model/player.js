@@ -11,7 +11,11 @@ class Player {
       return post('replace', tracks.map(track => track.url))
         .then(() => this.status());
     }
-    return get('play/' + tracks.url)
+    if (tracks) {
+      return post('replace', [tracks.url])
+        .then(() => this.status());
+    }
+    return get('play')
       .then(() => this.status());
   }
 
@@ -94,7 +98,8 @@ mixin(Player, Events);
 export default new Player();
 
 function get(path) {
-  return fetch(settings.serverUrl + '/' + path, {
+  console.log('GET', path);
+  return fetch(settings.serverUrl + '/player/' + path, {
     headers: {
       'Accept': 'application/json'
     }
@@ -104,7 +109,8 @@ function get(path) {
 }
 
 function post(cmd, body) {
-  return fetch(settings.serverUrl + '/' + cmd, {
+  console.log('POST', cmd);
+  return fetch(settings.serverUrl + '/player/' + cmd, {
     method: 'post',
     headers: {
       'Accept': 'application/json',
