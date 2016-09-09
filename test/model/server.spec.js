@@ -1,8 +1,7 @@
 import '../tabris-mock';
+import {expect, stub, restore} from '../test';
 import settings from '../../src/model/settings';
 import {loadStations} from '../../src/model/server';
-import {expect} from 'chai';
-import {stub} from 'sinon';
 
 describe('Server', function() {
 
@@ -14,9 +13,7 @@ describe('Server', function() {
     stub(global, 'fetch', () => Promise.resolve({json: () => data}));
   });
 
-  afterEach(function() {
-    fetch.restore();
-  });
+  afterEach(restore);
 
   describe('loadStations', function() {
 

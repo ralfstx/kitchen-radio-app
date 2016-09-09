@@ -1,5 +1,4 @@
-import {expect} from 'chai';
-import fetchMock from 'fetch-mock';
+import {expect, fetch_mock, restore} from '../test';
 import settings from '../../src/model/settings';
 import Player from '../../src/model/Player.js';
 
@@ -12,12 +11,12 @@ describe('Player', function() {
     player = new Player();
   });
 
-  afterEach(fetchMock.restore);
+  afterEach(restore);
 
   describe('playlist', function() {
 
     it('works', function() {
-      fetchMock.mock('*', [{
+      fetch_mock('*', [{
         file: 'http://example.org/albums/03d2fc34/discs/2/tracks/3'
       }]);
       return player.playlist().then(res => {

@@ -1,5 +1,5 @@
+import {expect} from '../test';
 import {mixin} from '../../src/model/helpers.js';
-import {expect} from 'chai';
 
 describe('helpers', function() {
 

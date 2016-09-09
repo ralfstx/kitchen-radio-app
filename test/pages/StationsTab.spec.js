@@ -1,9 +1,8 @@
 import '../tabris-mock.js';
+import {expect, stub, restore} from '../test';
+import {Tab} from 'tabris';
 import settings from '../../src/model/settings';
 import StationsTab from '../../src/pages/StationsTab';
-import {Tab} from 'tabris';
-import {expect} from 'chai';
-import {stub} from 'sinon';
 
 describe('StationsTab', function() {
 
@@ -15,9 +14,7 @@ describe('StationsTab', function() {
     stub(global, 'fetch', () => Promise.resolve({json: () => data}));
   });
 
-  afterEach(function() {
-    fetch.restore();
-  });
+  afterEach(restore);
 
   describe('create', function() {
 

@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from '../test';
 import {Album, Disc, Track} from '../../src/model/album.js';
 
 describe('Album', function() {

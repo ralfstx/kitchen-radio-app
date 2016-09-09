@@ -1,8 +1,7 @@
 import '../tabris-mock';
-import {getImage} from '../../src/model/images';
+import {expect, stub, restore} from '../test';
 import {device} from 'tabris';
-import {expect} from 'chai';
-import {stub} from 'sinon';
+import {getImage} from '../../src/model/images';
 
 describe('image', function() {
 
@@ -12,9 +11,7 @@ describe('image', function() {
       stub(device, 'get');
     });
 
-    afterEach(function() {
-      device.get.restore();
-    });
+    afterEach(restore);
 
     it('selects 1 for 1', function() {
       device.get.withArgs('scaleFactor').returns(1);
