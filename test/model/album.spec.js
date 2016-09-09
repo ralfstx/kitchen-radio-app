@@ -84,7 +84,7 @@ describe('Album', function() {
     });
 
     it('disc contains url', function() {
-      expect(album.discs[0].url).to.equal('URL');
+      expect(album.discs[0].url).to.equal('URL/discs/1');
     });
 
     it('contains all tracks', function() {
@@ -105,7 +105,7 @@ describe('Album', function() {
     });
 
     it('track contains url', function() {
-      expect(album.tracks[0].url).to.equal('URL/01.ogg');
+      expect(album.tracks[0].url).to.equal('URL/discs/1/tracks/1');
     });
 
   });

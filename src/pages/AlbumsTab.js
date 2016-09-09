@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import settings from '../model/settings';
-import {loadAlbums, loadAlbum, getCoverUrl} from '../model/server';
+import {loadAlbums, loadAlbum, getCoverUrl, search} from '../model/server';
 import AlbumPage from './AlbumPage';
 import {Tab, TextInput, ImageView, CollectionView} from 'tabris';
 
@@ -14,11 +14,7 @@ function albumView(properties) {
     let album = view.get('album');
     if (album) {
       let page = new AlbumPage().open();
-      let path = album.path;
-      loadAlbum(path).then(album => {
-        album.path = path;
-        page.album = album;
-      });
+      loadAlbum(album.id).then(album => page.album = album);
     }
   });
 }
@@ -83,10 +79,9 @@ export default class AlbumsTab extends Tab {
   }
 
   update() {
-    let filter = this._filter.toLowerCase();
-    if (filter) {
-      let match = album => (album.name || '').toLowerCase().indexOf(filter) !== -1;
-      this._albumsList.set('items', this._albums.filter(match));
+    let query = this._filter.toLowerCase();
+    if (query) {
+      search(query).then(res => this._albumsList.set('items', res));
     } else {
       this._albumsList.set('items', _.shuffle(this._albums));
     }

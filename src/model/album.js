@@ -47,6 +47,7 @@ export class Album {
     if (!url) throw new Error('Album url missing');
     this.url = url;
     this.name = data.name;
+    this.id = data.id;
     this.title  = data.title || '';
     this.artist = data.artist || '';
     this.discs = [];

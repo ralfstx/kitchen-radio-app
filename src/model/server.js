@@ -15,15 +15,20 @@ export function loadAlbums() {
   return get('/albums').then(resp => resp.json());
 }
 
+export function search(term) {
+  return get('/albums/search?q=' + encodeURIComponent(term))
+    .then(resp => resp.json());
+}
+
 export function getCoverUrl(album, size) {
-  let url = settings.serverUrl + '/albums/' + album.path + '/cover';
+  let url = settings.serverUrl + '/albums/' + album.id + '/cover';
   return size ? url + '?size=' + size : url;
 }
 
 export function loadAlbum(id) {
   return get('/albums/' + id)
     .then(resp => resp.json())
-    .then(data => new Album(settings.serverUrl + '/albums/' + id, data));
+    .then(data => new Album(settings.serverUrl + '/albums/' + id, Object.assign({id}, data)));
 }
 
 function get(path) {
