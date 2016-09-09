@@ -1,6 +1,6 @@
 import  {player} from '../model/Player';
 import {formatTime} from '../model/helpers';
-import {Tab, TextView, Slider, CollectionView, ImageView} from 'tabris';
+import {Tab, TextView, CollectionView, ImageView} from 'tabris';
 import {getCoverUrl} from '../model/server';
 
 export default class PlaylistTab extends Tab {
@@ -10,11 +10,6 @@ export default class PlaylistTab extends Tab {
       title: 'Playlist',
       background: 'white'
     });
-
-    this._slider = new Slider({
-      left: 0, right: 0, top: ['prev()', 5],
-      maximum: 1000
-    }).appendTo(this);
 
     this._playlistView = new CollectionView({
       left: 0, right: 0, top: ['prev()', 5], bottom: 0,
@@ -53,7 +48,7 @@ export default class PlaylistTab extends Tab {
 
   _updateStatus(status) {
     if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
-      this._slider.set({maximum: status.totalTime, selection: status.elapsedTime});
+      // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
     }
   }
 
