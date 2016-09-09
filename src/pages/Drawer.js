@@ -1,4 +1,4 @@
-import player from '../model/player';
+import {player} from '../model/Player';
 import {background} from '../model/colors';
 import {getImage} from '../model/images';
 import SettingsPage from './SettingsPage';

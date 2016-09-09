@@ -1,5 +1,5 @@
 import settings from '../model/settings';
-import player from '../model/player';
+import {player} from '../model/Player';
 import {loadStations} from '../model/server.js';
 import {Tab, CollectionView, ImageView} from 'tabris';
 

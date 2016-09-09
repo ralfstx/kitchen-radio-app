@@ -4,7 +4,7 @@ import {fetch} from '../lib/fetch';
 import settings from './settings';
 import {mixin} from './helpers';
 
-class Player {
+export default class Player {
 
   play(tracks) {
     if (Array.isArray(tracks)) {
@@ -83,19 +83,36 @@ class Player {
   }
 
   _processPlaylist(playlist) {
-    let result = playlist.map((item, index) => ({
-      name: item.Name || item.Title || 'Track ' + (index + 1),
-      time: item.Time
-    }));
+    let result = playlist.map(processPlaylistItem);
     this.trigger('playlist', result);
     return result;
   }
 
 }
 
+function processPlaylistItem(item, index) {
+  let albumPrefix = settings.serverUrl + '/';
+  if (item.file && item.file.indexOf(albumPrefix) === 0) {
+    let path = item.file.substr(albumPrefix.length);
+    let parts = path.split('/');
+    let album, disc, track;
+    while (parts.length) {
+      let next = parts.shift();
+      if (next === 'albums') album = parts.shift();
+      if (next === 'discs') disc = parseInt(parts.shift());
+      if (next === 'tracks') track = parseInt(parts.shift());
+    }
+    return {album,disc, track};
+  }
+  return {
+    name: item.Name || item.Title || 'Track ' + (index + 1),
+    time: item.Time
+  };
+}
+
 mixin(Player, Events);
 
-export default new Player();
+export let player = new Player();
 
 function get(path) {
   return fetch(settings.serverUrl + '/player/' + path, {

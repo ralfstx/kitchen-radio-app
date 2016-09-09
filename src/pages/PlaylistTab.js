@@ -1,7 +1,7 @@
-import player from '../model/player';
+import  {player} from '../model/Player';
 import {formatTime} from '../model/helpers';
-import {Tab, TextView, Slider, CollectionView} from 'tabris';
-
+import {Tab, TextView, Slider, CollectionView, ImageView} from 'tabris';
+import {getCoverUrl} from '../model/server';
 
 export default class PlaylistTab extends Tab {
 
@@ -18,10 +18,14 @@ export default class PlaylistTab extends Tab {
 
     this._playlistView = new CollectionView({
       left: 0, right: 0, top: ['prev()', 5], bottom: 0,
-      itemHeight: 40,
+      itemHeight: 52,
       initializeCell: cell => {
+        let imageView = new ImageView({
+          left: 2, top: 1, bottom: 1, width: 50,
+          scaleMode: 'fill'
+        }).appendTo(cell);
         let nameView = new TextView({
-          left: 12, right: 100, top: 4, bottom: 4,
+          left: 70, right: 100, top: 4, bottom: 4,
           textColor: 'rgb(74, 74, 74)'
         }).appendTo(cell);
         let timeView = new TextView({
@@ -30,6 +34,7 @@ export default class PlaylistTab extends Tab {
           alignment: 'right'
         }).appendTo(cell);
         cell.on('change:item', (view, item) => {
+          imageView.set('image', item.album ? getCoverUrl({id: item.album}) : null);
           nameView.set('text', item.name);
           timeView.set('text', formatTime(item.time));
         });

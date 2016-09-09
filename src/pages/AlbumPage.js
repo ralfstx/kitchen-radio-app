@@ -1,4 +1,4 @@
-import player from '../model/player';
+import {player} from '../model/Player';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {formatTime} from '../model/helpers';
