@@ -57,18 +57,18 @@ export default class Player {
   }
 
   _processStatus(status) {
-    if (status.playlist !== this._playlistid) {
-      this.playlist();
-      this._playlistid = status.playlist;
-    }
-    if (status.songid !== this._songid) {
-      //this._updateSong();
-      this._songid = status.song;
-    }
     let result = {
       state: status.state,
       elapsedTime: parseInt(status.elapsed)
     };
+    if (status.playlist !== this._playlistid) {
+      this._playlistid = status.playlist;
+      this.playlist();
+    }
+    if (status.songid !== this._songid) {
+      this._songid = status.song;
+      result.song = parseInt(status.song);
+    }
     if (status.time) {
       let times = status.time.split(':');
       let total = parseInt(times[1]);
@@ -90,24 +90,13 @@ export default class Player {
 
 }
 
-function processPlaylistItem(item, index) {
-  let albumPrefix = settings.serverUrl + '/';
-  if (item.file && item.file.indexOf(albumPrefix) === 0) {
-    let path = item.file.substr(albumPrefix.length);
-    let parts = path.split('/');
-    let album, disc, track;
-    while (parts.length) {
-      let next = parts.shift();
-      if (next === 'albums') album = parts.shift();
-      if (next === 'discs') disc = parseInt(parts.shift());
-      if (next === 'tracks') track = parseInt(parts.shift());
-    }
-    return {album,disc, track};
-  }
-  return {
-    name: item.Name || item.Title || 'Track ' + (index + 1),
-    time: item.Time
-  };
+function processPlaylistItem(item) {
+  let result = {name: item.name || ''};
+  if (item.album) result.album = item.album;
+  if ('disc' in item) result.disc = parseInt(item.disc);
+  if ('track' in item) result.track = parseInt(item.track);
+  if ('time' in item) result.time = parseInt(item.time);
+  return result;
 }
 
 mixin(Player, Events);

@@ -33,6 +33,13 @@ export default class PlaylistTab extends Tab {
           nameView.set('text', item.name);
           timeView.set('text', formatTime(item.time));
         });
+        let updater = () => {
+          let playing = this.get('playingIndex') === cell.get('itemIndex');
+          cell.set('background', playing ? '#eee' : '#fff');
+        };
+        cell.on('change:itemIndex', updater);
+        this.on('change:playingIndex', updater);
+        updater();
       }
     }).appendTo(this);
 
@@ -47,6 +54,7 @@ export default class PlaylistTab extends Tab {
   }
 
   _updateStatus(status) {
+    this.set('playingIndex', status.song);
     if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
       // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
     }
