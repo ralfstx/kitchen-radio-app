@@ -28,7 +28,7 @@ export function getCoverUrl(album, size) {
 export function loadAlbum(id) {
   return get('/albums/' + id)
     .then(resp => resp.json())
-    .then(data => new Album(settings.serverUrl + '/albums/' + id, Object.assign({id}, data)));
+    .then(data => new Album('/albums/' + id, Object.assign({id}, data)));
 }
 
 function get(path) {
