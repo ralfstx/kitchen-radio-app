@@ -1,5 +1,6 @@
 .settings/
 .project
+.history/
 build/
 node_modules/
 cordova/hooks/

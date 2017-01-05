@@ -1,22 +1,42 @@
 import _ from 'underscore';
+import {CollectionView, Composite, ImageView, Tab, TextInput, TextView} from 'tabris';
 import settings from '../model/settings';
 import {loadAlbums, loadAlbum, getCoverUrl, search} from '../model/server';
 import AlbumPage from './AlbumPage';
-import {Tab, TextInput, ImageView, CollectionView} from 'tabris';
 
-function albumView(properties) {
-  return new ImageView(Object.assign({
-    scaleMode: 'fill',
-    background: 'white'
-  }, properties)).on('change:album', (view, album) => {
-    view.set('image', album ? {src: getCoverUrl(album, 250), width: 250, height: 250} : null);
-  }).on('tap', view => {
-    let album = view.get('album');
-    if (album) {
-      let page = new AlbumPage().open();
-      loadAlbum(album.id).then(album => page.album = album);
-    }
-  });
+class AlbumView extends Composite {
+
+  constructor(properties) {
+    super(Object.assign({
+      background: '#eee'
+    }, properties));
+    new TextView({
+      id: 'text',
+      left: 5, top: 5, right: 5, bottom: 5
+    }).appendTo(this);
+    new ImageView({
+      id: 'image',
+      left: 0, top: 0, right: 0, bottom: 0,
+      scaleMode: 'fill'
+    }).appendTo(this);
+    this.on('tap', () => {
+      if (this.album) {
+        let page = new AlbumPage().open();
+        loadAlbum(this.album.id).then(album => page.album = album);
+      }
+    });
+  }
+
+  set album(album) {
+    this.find('#text').set('text', album ? album.name : '');
+    this.find('#image').set('image', album ? {src: getCoverUrl(album, 250), width: 250, height: 250} : null);
+    this._album = album;
+  }
+
+  get album() {
+    return this._album;
+  }
+
 }
 
 export default class AlbumsTab extends Tab {
@@ -41,9 +61,9 @@ export default class AlbumsTab extends Tab {
       columnCount: 3,
       refreshEnabled: true,
       initializeCell: cell => {
-        let view = albumView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
+        let view = new AlbumView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
         cell.on('change:item', (cell, item) => {
-          view.set('album', item);
+          view.album = item;
         });
       }
     }).on('refresh', (view) => {
