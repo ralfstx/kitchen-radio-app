@@ -1,5 +1,6 @@
 import settings from '../model/settings';
-import {Page, TextView, TextInput, ui} from 'tabris';
+import {Button, Page, TextView, TextInput, ui} from 'tabris';
+import {shutdown} from '../model/server';
 
 const labelWidth = 120;
 
@@ -24,6 +25,12 @@ export default class SettingsPage extends Page {
       text: settings.serverUrl
     }).on('blur', (view) => {
       settings.serverUrl = view.get('text');
+    }).appendTo(this);
+    new Button({
+      left: 16, top: 'prev() 32', right: 16,
+      text: 'Shut down'
+    }).on('longpress', () => {
+      shutdown();
     }).appendTo(this);
   }
 

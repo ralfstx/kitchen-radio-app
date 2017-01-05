@@ -31,6 +31,10 @@ export function loadAlbum(id) {
     .then(data => new Album('/albums/' + id, Object.assign({id}, data)));
 }
 
+export function shutdown() {
+  return get('/shutdown');
+}
+
 function get(path) {
   return fetch(settings.serverUrl + path, {
     headers: {
