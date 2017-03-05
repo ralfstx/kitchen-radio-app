@@ -1,7 +1,7 @@
 {
   "name": "kitchen-radio-app",
   "version": "0.0.1",
-  "main": "build/main.js",
+  "main": "dist/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ralfstx/kitchen-radio-app.git"
@@ -10,7 +10,8 @@
   "scripts": {
     "build:ios": "BABEL_ENV=ios npm run dist",
     "build:android": "BABEL_ENV=android npm run dist",
-    "dist": "rm -rf build/ && babel --copy-files --out-dir build/ src/",
+    "dist": "rm -rf dist/ && mkdir dist/ && cp -a images dist && npm run rollup",
+    "rollup": "rollup --format=cjs --output=dist/main.js --external tabris,underscore,core-js/client/shim.min.js -- src/main.js",
     "mocha": "mocha --compilers js:babel-core/register",
     "lint": "eslint .",
     "test": "npm run mocha -- 'test/**/*.spec.js'",
@@ -24,13 +25,13 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.14.0",
     "babel-core": "^6.14.0",
-    "babel-preset-es2015": "^6.14.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.23.0",
     "chai": "^3.5.0",
     "eslint": "^3.4.0",
     "fetch-mock": "^5.1.1",
     "mocha": "^3.2.0",
+    "rollup": "^0.41.4",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0"
   }

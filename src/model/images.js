@@ -4,7 +4,7 @@ const supportedRatios = [1, 1.5, 2, 3, 4];
 
 export function getImage(name, width, height) {
   let scale = getScale();
-  let image = {src: `src/images/${name}@${scale}x.png`};
+  let image = {src: `images/${name}@${scale}x.png`};
   if (width && height) {
     image.width = width;
     image.height = height;
