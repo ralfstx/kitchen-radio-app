@@ -1,9 +1,8 @@
-import {Events} from 'tabris';
-import {mixin} from './helpers';
+import Events from '../lib/Events';
 
 const store = {};
 
-class Settings {
+class Settings extends Events {
 
   get serverUrl() {
     return store.serverUrl;
@@ -20,7 +19,5 @@ class Settings {
   }
 
 }
-
-mixin(Settings, Events);
 
 export default new Settings();

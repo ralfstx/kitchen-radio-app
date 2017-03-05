@@ -1,10 +1,8 @@
-import {Events} from 'tabris';
-
+import Events from '../lib/Events';
 import {fetch} from '../lib/fetch';
 import settings from './settings';
-import {mixin} from './helpers';
 
-export default class Player {
+export default class Player extends Events {
 
   play(tracks) {
     if (Array.isArray(tracks)) {
@@ -98,8 +96,6 @@ function processPlaylistItem(item) {
   if ('time' in item) result.time = parseInt(item.time);
   return result;
 }
-
-mixin(Player, Events);
 
 export let player = new Player();
 
