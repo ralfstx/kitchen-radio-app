@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "command": "node",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "tasks": [
+    {
+      "taskName": "test file",
+      "args": [
+        "${workspaceRoot}/node_modules/.bin/mocha",
+        "--colors",
+        "--compilers",
+        "js:babel-core/register",
+        "${file}"
+      ],
+      "isTestCommand": true
+    }
+  ]
+}

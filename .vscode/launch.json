@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Test",
+      "type": "node",
+      "protocol": "inspector",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd"
+      },
+      "runtimeArgs": [
+        "--colors",
+        "--compilers",
+        "js:babel-core/register",
+        "${file}"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Process",
+      "address": "localhost",
+      "port": 5858
+    }
+  ]
+}
