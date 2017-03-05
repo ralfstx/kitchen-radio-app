@@ -28,14 +28,14 @@ export default class PlaylistTab extends Tab {
           textColor: 'rgb(74, 74, 74)',
           alignment: 'right'
         }).appendTo(cell);
-        cell.on('change:item', (view, item) => {
-          imageView.set('image', item.album ? getCoverUrl({id: item.album}) : null);
-          nameView.set('text', item.name);
-          timeView.set('text', formatTime(item.time));
+        cell.on('change:item', ({value: item}) => {
+          imageView.image = item.album ? getCoverUrl({id: item.album}) : null;
+          nameView.text = item.name;
+          timeView.text = formatTime(item.time);
         });
         let updater = () => {
-          let playing = this.get('playingIndex') === cell.get('itemIndex');
-          cell.set('background', playing ? '#eee' : '#fff');
+          let playing = this.playingIndex === cell.itemIndex;
+          cell.background = playing ? '#eee' : '#fff';
         };
         cell.on('change:itemIndex', updater);
         this.on('change:playingIndex', updater);
@@ -54,14 +54,15 @@ export default class PlaylistTab extends Tab {
   }
 
   _updateStatus(status) {
-    this.set('playingIndex', status.song);
+    this.playingIndex = status.song;
+    this.trigger('change:playingIndex');
     if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
       // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
     }
   }
 
   _updatePlaylist(playlist) {
-    this._playlistView.set('items', playlist);
+    this._playlistView.items = playlist;
   }
 
 }

@@ -1,4 +1,4 @@
-import '../tabris-mock';
+import {startTabris} from '../tabris-mock';
 import {expect, stub, restore} from '../test';
 import settings from '../../src/model/settings';
 import {loadAlbum, loadStations} from '../../src/model/server';
@@ -8,9 +8,10 @@ describe('Server', function() {
   let data;
 
   beforeEach(function() {
+    startTabris();
     settings.serverUrl = 'SERVER';
     data = [];
-    stub(global, 'fetch', () => Promise.resolve({json: () => data}));
+    stub(global, 'fetch', () => Promise.resolve({ok: true, json: () => data}));
   });
 
   afterEach(restore);

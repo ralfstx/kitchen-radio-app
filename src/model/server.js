@@ -12,12 +12,15 @@ export function loadStations() {
 }
 
 export function loadAlbums() {
-  return get('/albums').then(resp => resp.json());
+  return get('/albums')
+    .then(resp => resp.json())
+    .catch(() => []);
 }
 
 export function search(term) {
   return get('/albums/search?q=' + encodeURIComponent(term))
-    .then(resp => resp.json());
+    .then(resp => resp.json())
+    .catch(() => []);
 }
 
 export function getCoverUrl(album, size) {
@@ -28,7 +31,8 @@ export function getCoverUrl(album, size) {
 export function loadAlbum(id) {
   return get('/albums/' + id)
     .then(resp => resp.json())
-    .then(data => new Album('/albums/' + id, Object.assign({id}, data)));
+    .then(data => new Album('/albums/' + id, Object.assign({id}, data)))
+    .catch(() => null);
 }
 
 export function shutdown() {
@@ -36,11 +40,18 @@ export function shutdown() {
 }
 
 function get(path) {
-  return fetch(settings.serverUrl + path, {
+  let url = settings.serverUrl + path;
+  return fetch(url, {
     headers: {
       'Accept': 'application/json'
     }
+  }).then(res => {
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: GET ${url}`);
+    }
+    return res;
   }).catch(err => {
-    console.error(err);
+    console.error(err.stack || err);
+    throw err;
   });
 }

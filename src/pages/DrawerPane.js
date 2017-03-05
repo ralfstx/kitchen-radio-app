@@ -1,8 +1,8 @@
 import {player} from '../model/Player';
 import {background} from '../model/colors';
 import {getImage} from '../model/images';
-import SettingsPage from './SettingsPage';
-import {Drawer as TbDrawer, Composite, TextView, ImageView} from 'tabris';
+import SettingsScreen from './SettingsScreen';
+import {Composite, TextView, ImageView, ui} from 'tabris';
 
 class ButtonBar extends Composite {
 
@@ -18,10 +18,10 @@ class ButtonBar extends Composite {
 
 }
 
-export default class Drawer extends TbDrawer {
+export default class DrawerPane extends Composite {
 
-  constructor() {
-    super();
+  constructor(properties) {
+    super(properties);
     new Composite({
       id: 'header',
       left: 0, right: 0, top: 0, height: 120,
@@ -44,8 +44,10 @@ export default class Drawer extends TbDrawer {
       font: '18px sans-serif',
       text: 'Settings'
     }).on('tap', () => {
-      new SettingsPage().open();
-      this.close();
+      ui.drawer.close();
+      new SettingsScreen({
+        left: 0, top: 0, right: 0, bottom: 0
+      }).appendTo(ui.contentView);
     }).appendTo(this);
 
     new ButtonBar({centerX: 0, bottom: 16})

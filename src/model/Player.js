@@ -7,51 +7,61 @@ export default class Player extends Events {
   play(tracks) {
     if (Array.isArray(tracks)) {
       return post('replace', tracks.map(track => track.url))
-        .then(() => this.status());
+        .then(() => this.status())
+        .catch(() => {});
     }
     if (tracks) {
       return post('replace', [tracks.url])
-        .then(() => this.status());
+        .then(() => this.status())
+        .catch(() => {});
     }
     return get('play')
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   append(tracks) {
     return post('append', tracks.map(track => track.url))
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   pause() {
     get('pause')
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   next() {
     get('next')
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   prev() {
     get('prev')
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   stop() {
     get('stop')
-      .then(() => this.status());
+      .then(() => this.status())
+      .catch(() => {});
   }
 
   status() {
-    return get('status')
+    get('status')
       .then(rsp => rsp.json())
-      .then(status => this._processStatus(status));
+      .then(status => this._processStatus(status))
+      .catch(() => {});
   }
 
   playlist() {
     return get('playlist')
       .then(rsp => rsp.json())
-      .then(playlist => this._processPlaylist(playlist));
+      .then(playlist => this._processPlaylist(playlist))
+      .catch(() => {});
   }
 
   _processStatus(status) {
@@ -88,6 +98,8 @@ export default class Player extends Events {
 
 }
 
+export let player = new Player();
+
 function processPlaylistItem(item) {
   let result = {name: item.name || ''};
   if (item.album) result.album = item.album;
@@ -97,28 +109,40 @@ function processPlaylistItem(item) {
   return result;
 }
 
-export let player = new Player();
-
 function get(path) {
-  return fetch(settings.serverUrl + '/player/' + path, {
+  let url = settings.serverUrl + '/player/' + path;
+  return fetch(url, {
     headers: {
       'Accept': 'application/json'
     }
+  }).then(res => {
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: GET ${url}`);
+    }
+    return res;
   }).catch(err => {
-    console.error(err);
+    console.error(err.stack || err);
+    throw err;
   });
 }
 
 function post(cmd, body) {
-  return fetch(settings.serverUrl + '/player/' + cmd, {
+  let url = settings.serverUrl + '/player/' + cmd;
+  return fetch(url, {
     method: 'post',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(body)
+  }).then(res => {
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: POST ${url}`);
+    }
+    return res;
   }).catch(err => {
-    console.error(err);
+    console.error(err.stack || err);
+    throw err;
   });
 }
 

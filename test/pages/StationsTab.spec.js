@@ -1,4 +1,4 @@
-import '../tabris-mock.js';
+import {startTabris} from '../tabris-mock.js';
 import {expect, stub, restore} from '../test';
 import {Tab} from 'tabris';
 import settings from '../../src/model/settings';
@@ -9,6 +9,7 @@ describe('StationsTab', function() {
   let data;
 
   beforeEach(function() {
+    startTabris();
     settings.server = 'SERVER';
     data = {};
     stub(global, 'fetch', () => Promise.resolve({json: () => data}));

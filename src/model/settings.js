@@ -1,4 +1,5 @@
 import Events from '../lib/Events';
+import {localStorage} from 'tabris';
 
 const store = {};
 

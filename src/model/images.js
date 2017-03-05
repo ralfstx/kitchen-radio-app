@@ -15,7 +15,7 @@ export function getImage(name, width, height) {
 }
 
 function getScale() {
-  let scale = device.get('scaleFactor');
+  let scale = device.scaleFactor;
   return supportedRatios.reduce((prev, curr) => fit(prev, scale) > fit(curr, scale) ? prev : curr);
 }
 

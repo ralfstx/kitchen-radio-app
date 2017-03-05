@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import {CollectionView, Composite, ImageView, Tab, TextInput, TextView} from 'tabris';
+import {CollectionView, Composite, ImageView, Tab, TextInput, TextView, ui} from 'tabris';
 import settings from '../model/settings';
 import {loadAlbums, loadAlbum, getCoverUrl, search} from '../model/server';
-import AlbumPage from './AlbumPage';
+import AlbumScreen from './AlbumScreen';
 
 class AlbumView extends Composite {
 
@@ -21,8 +21,10 @@ class AlbumView extends Composite {
     }).appendTo(this);
     this.on('tap', () => {
       if (this.album) {
-        let page = new AlbumPage().open();
-        loadAlbum(this.album.id).then(album => page.album = album);
+        let albumScreen = new AlbumScreen({
+          left: 0, top: 0, right: 0, bottom: 0
+        }).appendTo(ui.contentView);
+        loadAlbum(this.album.id).then(album => albumScreen.album = album);
       }
     });
   }
@@ -51,7 +53,7 @@ export default class AlbumsTab extends Tab {
     new TextInput({
       left: 8, right: 8, top: 0,
       message: 'filter'
-    }).on('input', (view, text) => {
+    }).on('input', ({text}) => {
       this._filter = text;
       this.update();
     }).appendTo(this);
@@ -62,22 +64,20 @@ export default class AlbumsTab extends Tab {
       refreshEnabled: true,
       initializeCell: cell => {
         let view = new AlbumView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
-        cell.on('change:item', (cell, item) => {
+        cell.on('change:item', ({value: item}) => {
           view.album = item;
         });
       }
-    }).on('refresh', (view) => {
+    }).on('refresh', ({target: view}) => {
       this.load(true).then(() => {
-        view.set('refreshIndicator', false);
+        view.refreshIndicator = false;
       });
     }).appendTo(this);
-    this.on('resize', function(widget, bounds) {
-      let columns = Math.round(bounds.width / 132);
-      let size = Math.round(bounds.width / columns);
-      this._albumsList.set({
-        columnCount: columns,
-        itemHeight: size
-      });
+    this.on('resize', function({width}) {
+      let columns = Math.round(width / 132);
+      let size = Math.round(width / columns);
+      this._albumsList.columnCount = columns;
+      this._albumsList.itemHeight = size;
     });
     settings.on('change:serverUrl', () => {
       this.load(true);
@@ -101,9 +101,9 @@ export default class AlbumsTab extends Tab {
   update() {
     let query = this._filter.toLowerCase();
     if (query) {
-      search(query).then(res => this._albumsList.set('items', res));
+      search(query).then(res => this._albumsList.items = res);
     } else {
-      this._albumsList.set('items', _.shuffle(this._albums));
+      this._albumsList.items = _.shuffle(this._albums);
     }
   }
 

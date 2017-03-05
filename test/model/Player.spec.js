@@ -1,3 +1,4 @@
+import {startTabris} from '../tabris-mock.js';
 import {expect, fetch_mock, restore} from '../test';
 import settings from '../../src/model/settings';
 import Player from '../../src/model/Player.js';
@@ -7,6 +8,7 @@ describe('Player', function() {
   let player;
 
   beforeEach(function() {
+    startTabris();
     settings.serverUrl = 'http://example.org';
     player = new Player();
   });
