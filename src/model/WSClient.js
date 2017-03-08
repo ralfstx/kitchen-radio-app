@@ -8,8 +8,8 @@ export default class WSClient extends Events {
 
   constructor() {
     super();
-    this._url = settings.serverUrl.replace(/^[a-z]+:/, 'ws:');
     this._queue = [];
+    settings.on('change:serverUrl', () => this._connect());
     this._connect();
   }
 
@@ -17,7 +17,8 @@ export default class WSClient extends Events {
     if (this._socket) {
       this._socket.close();
     }
-    this._socket = new WebSocket(this._url, PROTOCOL);
+    let url = settings.serverUrl.replace(/^[a-z]+:/, 'ws:');
+    this._socket = new WebSocket(url, PROTOCOL);
     this._socket.onopen = event => this._onOpen(event);
     this._socket.onmessage = event => this._onMessage(event);
     this._socket.onerror = event => this._onError(event);
