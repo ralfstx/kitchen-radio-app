@@ -1,12 +1,18 @@
 import 'core-js/client/shim.min.js';
-
-import {background} from './model/colors';
-import settings from './model/settings';
-import MainScreen from './pages/MainScreen';
-import DrawerPane from './pages/DrawerPane';
 import {ui} from 'tabris';
 
+import services from './model/services';
+import settings from './model/settings';
+import {background} from './model/colors';
+import WSClient from './model/WSClient';
+import Player from './model/Player';
+import MainScreen from './pages/MainScreen';
+import DrawerPane from './pages/DrawerPane';
+
 settings.load();
+
+services.wsClient = new WSClient();
+services.player = new Player();
 
 ui.statusBar.background = background;
 ui.statusBar.theme = 'dark';

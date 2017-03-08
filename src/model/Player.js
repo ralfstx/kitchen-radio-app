@@ -1,67 +1,50 @@
 import Events from '../lib/Events';
-import {fetch} from '../lib/fetch';
-import settings from './settings';
+import services from './services';
 
 export default class Player extends Events {
 
+  constructor() {
+    super();
+    services.wsClient.on('status', status => this._processStatus(status));
+    services.wsClient.on('playlist', playlist => this._processPlaylist(playlist));
+  }
+
   play(tracks) {
     if (Array.isArray(tracks)) {
-      return post('replace', tracks.map(track => track.url))
-        .then(() => this.status())
-        .catch(() => {});
+      services.wsClient.sendCmd('replace', tracks.map(track => track.url));
+    } else if (tracks) {
+      services.wsClient.sendCmd('replace', [tracks.url]);
+    } else {
+      services.wsClient.sendCmd('play');
     }
-    if (tracks) {
-      return post('replace', [tracks.url])
-        .then(() => this.status())
-        .catch(() => {});
-    }
-    return get('play')
-      .then(() => this.status())
-      .catch(() => {});
   }
 
   append(tracks) {
-    return post('append', tracks.map(track => track.url))
-      .then(() => this.status())
-      .catch(() => {});
+    services.wsClient.sendCmd('append', tracks.map(track => track.url));
   }
 
   pause() {
-    get('pause')
-      .then(() => this.status())
-      .catch(() => {});
+    services.wsClient.sendCmd('pause');
   }
 
   next() {
-    get('next')
-      .then(() => this.status())
-      .catch(() => {});
+    services.wsClient.sendCmd('next');
   }
 
   prev() {
-    get('prev')
-      .then(() => this.status())
-      .catch(() => {});
+    services.wsClient.sendCmd('prev');
   }
 
   stop() {
-    get('stop')
-      .then(() => this.status())
-      .catch(() => {});
+    services.wsClient.sendCmd('stop');
   }
 
   status() {
-    get('status')
-      .then(rsp => rsp.json())
-      .then(status => this._processStatus(status))
-      .catch(() => {});
+    services.wsClient.sendCmd('status');
   }
 
   playlist() {
-    return get('playlist')
-      .then(rsp => rsp.json())
-      .then(playlist => this._processPlaylist(playlist))
-      .catch(() => {});
+    services.wsClient.sendCmd('playlist');
   }
 
   _processStatus(status) {
@@ -98,8 +81,6 @@ export default class Player extends Events {
 
 }
 
-export let player = new Player();
-
 function processPlaylistItem(item) {
   let result = {name: item.name || ''};
   if (item.album) result.album = item.album;
@@ -107,43 +88,6 @@ function processPlaylistItem(item) {
   if ('track' in item) result.track = parseInt(item.track);
   if ('time' in item) result.time = parseInt(item.time);
   return result;
-}
-
-function get(path) {
-  let url = settings.serverUrl + '/player/' + path;
-  return fetch(url, {
-    headers: {
-      'Accept': 'application/json'
-    }
-  }).then(res => {
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: GET ${url}`);
-    }
-    return res;
-  }).catch(err => {
-    console.error(err.stack || err);
-    throw err;
-  });
-}
-
-function post(cmd, body) {
-  let url = settings.serverUrl + '/player/' + cmd;
-  return fetch(url, {
-    method: 'post',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  }).then(res => {
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: POST ${url}`);
-    }
-    return res;
-  }).catch(err => {
-    console.error(err.stack || err);
-    throw err;
-  });
 }
 
 /*

@@ -1,5 +1,5 @@
 import settings from '../model/settings';
-import {player} from '../model/Player';
+import services from '../model/services';
 import {loadStations} from '../model/server.js';
 import {Tab, CollectionView, Composite, ImageView, TextView} from 'tabris';
 
@@ -20,7 +20,7 @@ class StationView extends Composite {
     }).appendTo(this);
     this.on('tap', () => {
       if (this.station) {
-        player.play(this.station);
+        services.player.play(this.station);
       }
     });
   }

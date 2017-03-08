@@ -1,4 +1,4 @@
-import {player} from '../model/Player';
+import services from '../model/services';
 import {background} from '../model/colors';
 import {getImage} from '../model/images';
 import SettingsScreen from './SettingsScreen';
@@ -51,17 +51,17 @@ export default class DrawerPane extends Composite {
     }).appendTo(this);
 
     new ButtonBar({centerX: 0, bottom: 16})
-      .addButton('skip_previous', () => player.prev())
-      .addButton('pause', () => player.pause())
-      .addButton('stop', () => player.stop())
-      .addButton('skip_next', () => player.next())
-      .addButton('refresh', () => player.status())
+      .addButton('skip_previous', () => services.player.prev())
+      .addButton('pause', () => services.player.pause())
+      .addButton('stop', () => services.player.stop())
+      .addButton('skip_next', () => services.player.next())
+      .addButton('refresh', () => services.player.status())
       .appendTo(this);
 
-    player.on('status', (status) => {
+    services.player.on('status', (status) => {
       this._updateStatus(status);
     });
-    player.status();
+    services.player.status();
   }
 
   _updateStatus(status) {

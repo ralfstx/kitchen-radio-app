@@ -1,4 +1,4 @@
-import {player} from '../model/Player';
+import services from '../model/services';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {formatTime} from '../model/helpers';
@@ -74,7 +74,7 @@ export default class AlbumScreen extends Composite {
       image: getImage('play_circle_filled_black_48dp')
     }).on('tap', () => {
       let album = cell.item;
-      player.play(album.tracks);
+      services.player.play(album.tracks);
     }).appendTo(cell);
     cell.on('change:item', ({value: album}) => {
       coverView.image = {src: getCoverUrl(album), width: 250, height: 250};
@@ -105,13 +105,13 @@ export default class AlbumScreen extends Composite {
       let track = cell.item;
       let tracks = track.album.tracks;
       let index = tracks.indexOf(track);
-      player.play(tracks.slice(index));
+      services.player.play(tracks.slice(index));
     }).on('swipe:left', () => {
       let track = cell.item;
-      player.play([track]);
+      services.player.play([track]);
     }).on('swipe:right', () => {
       let track = cell.item;
-      player.append([track]);
+      services.player.append([track]);
     });
   }
 

@@ -1,4 +1,4 @@
-import  {player} from '../model/Player';
+import services from '../model/services';
 import {formatTime} from '../model/helpers';
 import {Tab, TextView, CollectionView, ImageView} from 'tabris';
 import {getCoverUrl} from '../model/server';
@@ -43,14 +43,14 @@ export default class PlaylistTab extends Tab {
       }
     }).appendTo(this);
 
-    this.on('appear', () => player.status());
+    this.on('appear', () => services.player.status());
 
-    player.on('status', (status) => this._updateStatus(status));
-    player.on('playlist', (playlist) => this._updatePlaylist(playlist));
+    services.player.on('status', (status) => this._updateStatus(status));
+    services.player.on('playlist', (playlist) => this._updatePlaylist(playlist));
   }
 
   load() {
-    player.status();
+    services.player.status();
   }
 
   _updateStatus(status) {
