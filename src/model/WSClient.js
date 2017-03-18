@@ -38,7 +38,7 @@ export default class WSClient extends Events {
   }
 
   _onClose() {
-    console.info('ES connection closed');
+    console.info('WS connection closed');
   }
 
   _onMessage(event) {
