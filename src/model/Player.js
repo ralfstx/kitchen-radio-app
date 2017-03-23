@@ -23,6 +23,10 @@ export default class Player extends Events {
     services.wsClient.sendCmd('append', tracks.map(track => track.url));
   }
 
+  remove(index) {
+    services.wsClient.sendCmd('remove', index);
+  }
+
   pause() {
     services.wsClient.sendCmd('pause');
   }
