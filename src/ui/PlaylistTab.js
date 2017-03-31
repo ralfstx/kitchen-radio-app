@@ -1,7 +1,8 @@
 import services from '../model/services';
 import {formatTime} from '../model/helpers';
-import {Composite, Tab, TextView, CollectionView, ImageView} from 'tabris';
+import {Cell, Composite, Tab, TextView, CollectionView, ImageView} from 'tabris';
 import {getCoverUrl} from '../model/server';
+import {enableSwipe} from './swipe-to-dismiss';
 
 const CELL_BG = '#fff';
 const CELL_SELECTED_BG = '#eee';
@@ -13,7 +14,7 @@ class ItemView extends Composite {
       background: CELL_BG
     }));
     this._createUI();
-    this._setupSwipe();
+    enableSwipe(this);
   }
 
   _createUI() {
@@ -33,21 +34,6 @@ class ItemView extends Composite {
       textColor: 'rgb(74, 74, 74)',
       alignment: 'right'
     }).appendTo(this);
-  }
-
-  _setupSwipe() {
-    this.on('pan:horizontal', ({translationX}) => this.transform = {translationX});
-    this.on('touchcancel', () => this.animate({transform: {translationX: 0}}, {duration: 200, easing: 'ease-in'}));
-    this.on('touchend', () => {
-      let offset = this.transform.translationX;
-      let width = this.bounds.width;
-      if (offset > width / 2 || offset < -width / 2) {
-        this.animate({transform: {translationX: offset < 0 ? -width : width}}, {duration: 200, easing: 'ease-in'})
-          .then(this.trigger('dismiss'));
-      } else {
-        this.animate({transform: {translationX: 0}}, {duration: 200, easing: 'ease-in'});
-      }
-    });
   }
 
   set item(item) {
@@ -76,7 +62,8 @@ export default class PlaylistTab extends Tab {
     this._playlistView = new CollectionView({
       left: 0, right: 0, top: ['prev()', 5], bottom: 0,
       itemHeight: 52,
-      initializeCell: cell => {
+      createCell: () => {
+        let cell = new Cell();
         cell.background = '#ff77ff';
         let itemView = new ItemView({
           left: 0, top: 0, right: 0, bottom: 0
@@ -85,6 +72,7 @@ export default class PlaylistTab extends Tab {
         cell.on('change:item', ({value: item}) => itemView.item = item);
         cell.on('change:itemIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
         this.on('change:playingIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
+        return cell;
       }
     }).appendTo(this);
 
