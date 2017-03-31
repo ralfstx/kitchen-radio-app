@@ -36,8 +36,7 @@ class ItemView extends Composite {
   }
 
   _setupSwipe() {
-    this.on('pan:left', ({translation}) => this.transform = {translationX: translation.x});
-    this.on('pan:right', ({translation}) => this.transform = {translationX: translation.x});
+    this.on('pan:horizontal', ({translationX}) => this.transform = {translationX});
     this.on('touchcancel', () => this.animate({transform: {translationX: 0}}, {duration: 200, easing: 'ease-in'}));
     this.on('touchend', () => {
       let offset = this.transform.translationX;

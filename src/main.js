@@ -6,8 +6,8 @@ import settings from './model/settings';
 import {background} from './model/colors';
 import WSClient from './model/WSClient';
 import Player from './model/Player';
-import MainScreen from './pages/MainScreen';
-import DrawerPane from './pages/DrawerPane';
+import MainScreen from './ui/MainScreen';
+import DrawerPane from './ui/DrawerPane';
 
 settings.load();
 

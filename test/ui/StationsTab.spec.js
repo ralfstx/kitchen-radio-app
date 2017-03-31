@@ -2,7 +2,7 @@ import {startTabris} from '../tabris-mock.js';
 import {expect, stub, restore} from '../test';
 import {Tab} from 'tabris';
 import settings from '../../src/model/settings';
-import StationsTab from '../../src/pages/StationsTab';
+import StationsTab from '../../src/ui/StationsTab';
 
 describe('StationsTab', function() {
 
