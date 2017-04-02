@@ -24,6 +24,7 @@
     "tabris": "2.0.0-beta2"
   },
   "devDependencies": {
+    "adm-zip": "^0.4.7",
     "babel-core": "^6.14.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.23.0",
     "chai": "^3.5.0",

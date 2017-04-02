@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // See https://design.google.com/icons/
+// Usage: download ic_playlist_add_black_24dp.zip
 
 let fs = require('fs');
 let path = require('path');
@@ -53,7 +54,7 @@ function extractImages(file) {
     if (re) {
       let factor = factors[re[1]];
       let name = re[2];
-      let target = path.join('src/images', `${name}@${factor}x.png`);
+      let target = path.join('images', `${name}@${factor}x.png`);
       console.log('write', target);
       fs.writeFileSync(target, entry.getData());
     }
