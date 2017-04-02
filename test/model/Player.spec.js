@@ -18,16 +18,16 @@ describe('Player', function() {
 
   afterEach(restore);
 
-  describe('status', function() {
+  describe('update', function() {
     it('send ws command status', function() {
-      player.status();
+      player.update();
       expect(services.wsClient.sendCmd).to.have.been.calledWith('status');
     });
   });
 
-  describe('playlist', function() {
+  describe('_updatePlaylist', function() {
     it('send ws command playlist', function() {
-      player.playlist();
+      player._updatePlaylist();
       expect(services.wsClient.sendCmd).to.have.been.calledWith('playlist');
     });
   });
@@ -38,7 +38,7 @@ describe('Player', function() {
 
     beforeEach(function() {
       listener = spy();
-      player.on('playlist', listener);
+      player.on('change:playlist', listener);
     });
 
     it('triggers event with all fields', function() {

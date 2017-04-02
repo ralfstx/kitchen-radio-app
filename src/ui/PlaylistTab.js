@@ -76,22 +76,16 @@ export default class PlaylistTab extends Tab {
       }
     }).appendTo(this);
 
-    this.on('appear', () => services.player.status());
-
-    services.player.on('status', (status) => this._updateStatus(status));
-    services.player.on('playlist', (playlist) => this._updatePlaylist(playlist));
-  }
-
-  load() {
-    services.player.status();
+    services.player.on('change:status', (status) => this._updateStatus(status));
+    services.player.on('change:playlist', (playlist) => this._updatePlaylist(playlist));
   }
 
   _updateStatus(status) {
     this.playingIndex = status.song;
     this.trigger('change:playingIndex');
-    if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
-      // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
-    }
+    // if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
+    //   // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
+    // }
   }
 
   _updatePlaylist(playlist) {

@@ -55,13 +55,13 @@ export default class DrawerPane extends Composite {
       .addButton('pause', () => services.player.pause())
       .addButton('stop', () => services.player.stop())
       .addButton('skip_next', () => services.player.next())
-      .addButton('refresh', () => services.player.status())
+      .addButton('refresh', () => services.player.update())
       .appendTo(this);
 
-    services.player.on('status', (status) => {
+    services.player.on('change:status', (status) => {
       this._updateStatus(status);
     });
-    services.player.status();
+    services.player.update();
   }
 
   _updateStatus(status) {

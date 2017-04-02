@@ -5,8 +5,18 @@ export default class Player extends Events {
 
   constructor() {
     super();
+    this._status = {};
+    this._playlist = [];
     services.wsClient.on('status', status => this._processStatus(status));
     services.wsClient.on('playlist', playlist => this._processPlaylist(playlist));
+  }
+
+  get status() {
+    return this._status;
+  }
+
+  get playlist() {
+    return this._playlist;
   }
 
   play(tracks) {
@@ -31,6 +41,10 @@ export default class Player extends Events {
     services.wsClient.sendCmd('pause');
   }
 
+  skip(index) {
+    services.wsClient.sendCmd('skip', index);
+  }
+
   next() {
     services.wsClient.sendCmd('next');
   }
@@ -43,11 +57,11 @@ export default class Player extends Events {
     services.wsClient.sendCmd('stop');
   }
 
-  status() {
+  update() {
     services.wsClient.sendCmd('status');
   }
 
-  playlist() {
+  _updatePlaylist() {
     services.wsClient.sendCmd('playlist');
   }
 
@@ -58,7 +72,7 @@ export default class Player extends Events {
     };
     if (status.playlist !== this._playlistid) {
       this._playlistid = status.playlist;
-      this.playlist();
+      this._updatePlaylist();
     }
     if (status.songid !== this._songid) {
       this._songid = status.song;
@@ -73,14 +87,13 @@ export default class Player extends Events {
         result.elapsedTime = elapsed;
       }
     }
-    this.trigger('status', result);
-    return result;
+    this._status = result;
+    this.trigger('change:status', result);
   }
 
   _processPlaylist(playlist) {
-    let result = playlist.map(processPlaylistItem);
-    this.trigger('playlist', result);
-    return result;
+    this._playlist = playlist.map(processPlaylistItem);
+    this.trigger('change:playlist', this._playlist);
   }
 
 }
