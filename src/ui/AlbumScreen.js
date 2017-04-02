@@ -2,7 +2,125 @@ import services from '../model/services';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {formatTime} from '../model/helpers';
-import {Composite, TextView, ImageView, CollectionView, app} from 'tabris';
+import {Cell, Composite, TextView, ImageView, CollectionView, app} from 'tabris';
+import SelectableView from './SelectableView';
+
+class AlbumCell extends Cell {
+
+  constructor(properties) {
+    super(properties);
+    let coverView = new ImageView({
+      left: 0, right: 0, top: 0, bottom: 0,
+      scaleMode: 'fit'
+    }).appendTo(this);
+    new ImageView({
+      right: 125, bottom: 50, width: 50, height: 50, cornerRadius: 25,
+      elevation: 4,
+      background: '#323246',
+      image: getImage('play_arrow_white_36dp')
+    }).on('tap', () => {
+      services.player.play(this._getTracks());
+    }).appendTo(this);
+    new ImageView({
+      right: 50, bottom: 50, width: 50, height: 50, cornerRadius: 25,
+      elevation: 4,
+      background: '#323246',
+      image: getImage('playlist_add_white_36dp')
+    }).on('tap', () => {
+      services.player.append(this._getTracks());
+    }).appendTo(this);
+    this.on('change:item', ({value: album}) => {
+      coverView.image = {src: getCoverUrl(album), width: 250, height: 250};
+    });
+  }
+
+  _getTracks() {
+    let album = this.item;
+    let selected = album.tracks.filter(track => track.selected);
+    return selected.length ? selected : album.tracks;
+  }
+
+}
+
+class TrackView extends SelectableView {
+
+  constructor(properties) {
+    super(Object.assign({
+      background: 'white'
+    }, properties));
+    this._createUI();
+    this.on('change:selected', () => this.track ? this.track.selected = this.selected : null);
+  }
+
+  _createUI() {
+    new TextView({
+      id: 'numberView',
+      left: 8, width: 32, top: 4, bottom: 4,
+      alignment: 'right',
+      opacity: 0.25,
+      font: '16px sans-serif'
+    }).appendTo(this);
+    new TextView({
+      id: 'titleView',
+      left: 48, right: 84, top: 4, bottom: 4,
+      font: '16px sans-serif'
+    }).appendTo(this);
+    new TextView({
+      id: 'timeView',
+      right: 16, width: 72, top: 4, bottom: 4,
+      alignment: 'right',
+      font: '16px sans-serif'
+    }).appendTo(this);
+  }
+
+  set track(track) {
+    this._track = track;
+    this.selected = !!track.selected;
+    this.apply({
+      '#numberView': {text: track.number},
+      '#titleView': {text: track.title},
+      '#timeView': {text: formatTime(track.length)},
+    });
+  }
+
+  get track() {
+    return this._track || null;
+  }
+
+}
+
+class TrackCell extends Cell {
+
+  constructor(properties) {
+    super(Object.assign({
+      background: '#323246'
+    }, properties));
+    this._createUI();
+  }
+
+  _createUI() {
+    let view = new TrackView({
+      left: 0, right: 0, top: 0, bottom: 0
+    }).appendTo(this);
+    this.on('change:item', ({value: track}) => view.track = track);
+  }
+
+}
+
+class SectionCell extends Cell {
+
+  constructor(properties) {
+    super(properties);
+    let textView = new TextView({
+      left: 45, right: 85, top: 5, bottom: 5,
+      font: 'bold 18px sans-serif'
+    }).appendTo(this);
+    this.on('change:item', ({value: disc}) => {
+      textView.text = 'Disc ' + disc.number;
+    });
+  }
+
+}
 
 export default class AlbumScreen extends Composite {
 
@@ -15,14 +133,14 @@ export default class AlbumScreen extends Composite {
     this._trackListView = new CollectionView({
       itemHeight: item => item.type === 'album' ? coverSize : 50,
       cellType: item => item.type,
-      initializeCell: (cell, type) => {
+      createCell: (type) => {
         if (type === 'album') {
-          return this._createAlbumCell(cell);
+          return new AlbumCell();
         }
         if (type === 'track') {
-          return this._createTrackCell(cell);
+          return new TrackCell();
         }
-        return this._createSectionCell(cell);
+        return new SectionCell();
       }
     }).appendTo(this);
     this._listenOnBackNavigation();
@@ -60,69 +178,6 @@ export default class AlbumScreen extends Composite {
       duration: 150,
       easing: 'ease-out'
     }).then(() => this.dispose());
-  }
-
-  _createAlbumCell(cell) {
-    let coverView = new ImageView({
-      left: 0, right: 0, top: 0, bottom: 0,
-      scaleMode: 'fit'
-    }).appendTo(cell);
-    new ImageView({
-      right: 50, bottom: 50, width: 50, height: 50, cornerRadius: 25,
-      background: 'rgba(45, 163, 47, 0.75)',
-      elevation: 4,
-      image: getImage('play_circle_filled_black_48dp')
-    }).on('tap', () => {
-      let album = cell.item;
-      services.player.play(album.tracks);
-    }).appendTo(cell);
-    cell.on('change:item', ({value: album}) => {
-      coverView.image = {src: getCoverUrl(album), width: 250, height: 250};
-    });
-  }
-
-  _createTrackCell(cell) {
-    let numberView = new TextView({
-      left: 8, width: 32, top: 4, bottom: 4,
-      alignment: 'right',
-      opacity: 0.25,
-      font: '16px sans-serif'
-    }).appendTo(cell);
-    let titleView = new TextView({
-      left: 48, right: 84, top: 4, bottom: 4,
-      font: '16px sans-serif'
-    }).appendTo(cell);
-    let timeView = new TextView({
-      right: 16, width: 72, top: 4, bottom: 4,
-      alignment: 'right',
-      font: '16px sans-serif'
-    }).appendTo(cell);
-    cell.on('change:item', ({value: track}) => {
-      numberView.text = track.number;
-      titleView.text = track.title;
-      timeView.text = formatTime(track.length);
-    }).on('tap', () => {
-      let track = cell.item;
-      let tracks = track.album.tracks;
-      let index = tracks.indexOf(track);
-      services.player.play(tracks.slice(index));
-    }).on('swipe:left', () => {
-      let track = cell.item;
-      services.player.play([track]);
-    }).on('swipe:right', () => {
-      let track = cell.item;
-      services.player.append([track]);
-    });
-  }
-
-  _createSectionCell(cell) {
-    let textView = new TextView({
-      left: 45, right: 85, top: 5, bottom: 5,
-      font: 'bold 18px sans-serif'
-    }).appendTo(cell);
-    cell.on('change:item', ({value: disc}) => {
-      textView.text = 'Disc ' + disc.number;
-    });
   }
 
   _listenOnBackNavigation() {
