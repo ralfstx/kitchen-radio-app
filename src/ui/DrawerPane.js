@@ -1,5 +1,5 @@
 import services from '../model/services';
-import {background} from '../model/colors';
+import {RED_BACKGROUND} from '../model/colors';
 import {getImage} from '../model/images';
 import SettingsScreen from './SettingsScreen';
 import {Composite, TextView, ImageView, ui} from 'tabris';
@@ -25,7 +25,7 @@ export default class DrawerPane extends Composite {
     new Composite({
       id: 'header',
       left: 0, right: 0, top: 0, height: 120,
-      background: background
+      background: RED_BACKGROUND
     }).append([
       new ImageView({
         id: 'statusIcon',

@@ -1,9 +1,10 @@
 import {Composite, TabFolder, device} from 'tabris';
-import {background} from '../model/colors';
+import {RED_BACKGROUND} from '../model/colors';
 import AlbumsTab from './AlbumsTab';
 import AlbumScreen from './AlbumScreen';
 import StationsTab from './StationsTab';
-import PlaylistTab from './PlaylistTab';
+import PlaylistView from './PlaylistView';
+import StatusView from './StatusView';
 import {loadAlbum} from '../model/server';
 
 
@@ -16,9 +17,9 @@ export default class MainScreen extends Composite {
 
   _createUI() {
     new TabFolder({
-      left: 0, top: 0, right: 0, bottom: 0,
+      left: 0, top: 0, right: 0, bottom: 32,
       paging: !isIOS(),
-      background: background,
+      background: RED_BACKGROUND,
       textColor: 'white',
       elevation: 2
     }).on('change:selection', ({value: tab}) => {
@@ -27,19 +28,27 @@ export default class MainScreen extends Composite {
       }
     }).append([
       new AlbumsTab(),
-      new StationsTab(),
-      new PlaylistTab()
+      new StationsTab()
     ]).appendTo(this);
+    new StatusView({
+      left: 0, right: 0, bottom: 0, height: 32,
+      elevation: 8,
+    }).appendTo(this);
+    new PlaylistView({
+      left: 0, right: 0, bottom: 0, top: 0,
+      elevation: 12,
+    }).on('resize', ({target}) => target.transform = {translationY: target.bounds.height}).appendTo(this);
   }
 
   showAlbum(albumId) {
     if (!albumId) {
       return;
     }
+    this.find('PlaylistView').forEach(view => view.hide());
     let albumsTab = this.find('AlbumsTab').first();
     this.find('TabFolder').set('selection', albumsTab);
     let albumScreen = new AlbumScreen({
-      left: 0, top: 0, right: 0, bottom: 0,
+      left: 0, top: 0, right: 0, bottom: 32,
       transform: {translationY: albumsTab.bounds.height},
       opacity: 0
     }).appendTo(this);
@@ -51,6 +60,10 @@ export default class MainScreen extends Composite {
       easing: 'ease-in'
     });
     loadAlbum(albumId).then(album => albumScreen.album = album);
+  }
+
+  showPlaylist() {
+    this.find('PlaylistView').forEach(view => view.show());
   }
 
 }

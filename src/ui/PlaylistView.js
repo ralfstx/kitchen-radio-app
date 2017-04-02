@@ -1,6 +1,6 @@
 import services from '../model/services';
 import {formatTime} from '../model/helpers';
-import {Cell, Composite, Tab, TextView, CollectionView, ImageView} from 'tabris';
+import {Cell, Composite, TextView, CollectionView, ImageView, app} from 'tabris';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {enableSwipe} from './swipe-to-dismiss';
@@ -101,14 +101,18 @@ class ItemViewOverlay extends Composite {
 
 }
 
-export default class PlaylistTab extends Tab {
+export default class PlaylistView extends Composite {
 
-  constructor() {
-    super({
-      title: 'Playlist',
+  constructor(properties) {
+    super(Object.assign({
       background: 'white'
-    });
+    }, properties));
+    this._createUI();
+    this._listenOnBackNavigation();
+    this._init();
+  }
 
+  _createUI() {
     this._playlistView = new CollectionView({
       left: 0, right: 0, top: ['prev()', 5], bottom: 0,
       itemHeight: 52,
@@ -128,12 +132,46 @@ export default class PlaylistTab extends Tab {
       }
     }).appendTo(this);
     this._playlistView.on('scroll', () => this._hideOverlays());
-
-    services.player.on('change:status', (status) => this._updateStatus(status));
-    services.player.on('change:playlist', (playlist) => this._updatePlaylist(playlist));
   }
 
-  load() {
+  show() {
+    if (this._animating) return;
+    this._animating = true;
+    this.animate({
+      transform: {}
+    }, {
+      duration: 150,
+      easing: 'ease-out'
+    }).then(() => {
+      delete this._animating;
+    });
+  }
+
+  hide() {
+    if (this._animating) return;
+    this._animating = true;
+    this.animate({
+      transform: {translationY: this.bounds.height}
+    }, {
+      duration: 150,
+      easing: 'ease-out'
+    }).then(() => {
+      delete this._animating;
+    });
+  }
+
+  _listenOnBackNavigation() {
+    let listener = (event) => {
+      event.preventDefault();
+      this.hide();
+    };
+    app.on('backnavigation', listener);
+    this.on('dispose', () => app.off('backnavigation', listener));
+  }
+
+  _init() {
+    services.player.on('change:status', (status) => this._updateStatus(status));
+    services.player.on('change:playlist', (playlist) => this._updatePlaylist(playlist));
     this._updatePlaylist(services.player.playlist);
     this._updateStatus(services.player.status);
   }

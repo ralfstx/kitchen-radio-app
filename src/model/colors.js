@@ -1,2 +1,2 @@
 
-export let background = 'rgb(193, 64, 42)';
+export const RED_BACKGROUND = 'rgb(193, 64, 42)';
