@@ -1,5 +1,5 @@
-import _ from 'underscore';
 import {CollectionView, Composite, ImageView, Tab, TextInput, TextView} from 'tabris';
+import {shuffle} from '../lib/util';
 import settings from '../model/settings';
 import services from '../model/services';
 import {loadAlbums, getCoverUrl, search} from '../model/server';
@@ -100,7 +100,7 @@ export default class AlbumsTab extends Tab {
     if (query) {
       search(query).then(res => this._albumsList.items = res);
     } else {
-      this._albumsList.items = _.shuffle(this._albums);
+      this._albumsList.items = shuffle(this._albums.slice());
     }
   }
 
