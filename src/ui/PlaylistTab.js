@@ -14,7 +14,6 @@ class ItemView extends Composite {
       background: CELL_BG
     }));
     this._createUI();
-    enableSwipe(this);
   }
 
   _createUI() {
@@ -22,6 +21,8 @@ class ItemView extends Composite {
       id: 'image',
       left: 2, top: 1, bottom: 1, width: 50,
       scaleMode: 'fill'
+    }).on('tap', () => {
+      services.ui.showAlbum(this.item.album);
     }).appendTo(this);
     new TextView({
       id: 'name',
@@ -37,12 +38,17 @@ class ItemView extends Composite {
   }
 
   set item(item) {
+    this._item = item;
     this.transform = {};
     this.apply({
       '#image': {image: item.album ? getCoverUrl({id: item.album}) : null},
       '#name': {text: item.name},
       '#time': {text: formatTime(item.time)}
     });
+  }
+
+  get item() {
+    return this._item;
   }
 
   set playing(playing) {
@@ -64,10 +70,11 @@ export default class PlaylistTab extends Tab {
       itemHeight: 52,
       createCell: () => {
         let cell = new Cell();
-        cell.background = '#ff77ff';
+        cell.background = '#855';
         let itemView = new ItemView({
           left: 0, top: 0, right: 0, bottom: 0
         }).appendTo(cell);
+        enableSwipe(itemView);
         itemView.on('dismiss', () => services.player.remove(cell.itemIndex));
         cell.on('change:item', ({value: item}) => itemView.item = item);
         cell.on('change:itemIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
@@ -78,6 +85,12 @@ export default class PlaylistTab extends Tab {
 
     services.player.on('change:status', (status) => this._updateStatus(status));
     services.player.on('change:playlist', (playlist) => this._updatePlaylist(playlist));
+  }
+
+  load() {
+    console.log('load', services.player.playlist, services.player.status);
+    this._updatePlaylist(services.player.playlist);
+    this._updateStatus(services.player.status);
   }
 
   _updateStatus(status) {

@@ -61,7 +61,6 @@ export default class DrawerPane extends Composite {
     services.player.on('change:status', (status) => {
       this._updateStatus(status);
     });
-    services.player.update();
   }
 
   _updateStatus(status) {

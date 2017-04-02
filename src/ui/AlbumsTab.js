@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import {CollectionView, Composite, ImageView, Tab, TextInput, TextView, ui} from 'tabris';
+import {CollectionView, Composite, ImageView, Tab, TextInput, TextView} from 'tabris';
 import settings from '../model/settings';
-import {loadAlbums, loadAlbum, getCoverUrl, search} from '../model/server';
-import AlbumScreen from './AlbumScreen';
+import services from '../model/services';
+import {loadAlbums, getCoverUrl, search} from '../model/server';
 
 class AlbumView extends Composite {
 
@@ -21,10 +21,7 @@ class AlbumView extends Composite {
     }).appendTo(this);
     this.on('tap', () => {
       if (this.album) {
-        let albumScreen = new AlbumScreen({
-          left: 0, top: 0, right: 0, bottom: 0
-        }).appendTo(ui.contentView);
-        loadAlbum(this.album.id).then(album => albumScreen.album = album);
+        services.ui.showAlbum(this.album.id);
       }
     });
   }

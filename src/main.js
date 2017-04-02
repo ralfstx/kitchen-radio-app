@@ -20,6 +20,6 @@ ui.statusBar.theme = 'dark';
 new DrawerPane({left: 0, top: 0, right: 0, bottom: 0}).appendTo(ui.drawer);
 ui.drawer.enabled = true;
 
-new MainScreen({
+services.ui = new MainScreen({
   left: 0, top: 0, right: 0, bottom: 0
 }).appendTo(ui.contentView);

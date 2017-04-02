@@ -9,6 +9,7 @@ export default class Player extends Events {
     this._playlist = [];
     services.wsClient.on('status', status => this._processStatus(status));
     services.wsClient.on('playlist', playlist => this._processPlaylist(playlist));
+    this.update();
   }
 
   get status() {
