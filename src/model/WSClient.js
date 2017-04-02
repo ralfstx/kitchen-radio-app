@@ -45,7 +45,6 @@ export default class WSClient extends Events {
     if (typeof event.data === 'string') {
       let data = JSON.parse(event.data);
       if (data.topic) {
-        console.info('Server message', data.topic);
         this.trigger(data.topic, data.args);
       }
     }
@@ -63,7 +62,6 @@ export default class WSClient extends Events {
   }
 
   _sendCmd(cmd) {
-    console.log('sending', cmd.command);
     this._socket.send(JSON.stringify(cmd));
   }
 

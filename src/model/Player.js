@@ -1,4 +1,5 @@
 import Events from '../lib/Events';
+import {isArray, isObject, isInteger} from '../lib/util';
 import services from './services';
 
 export default class Player extends Events {
@@ -20,13 +21,13 @@ export default class Player extends Events {
     return this._playlist;
   }
 
-  play(tracks) {
-    if (Array.isArray(tracks)) {
-      services.wsClient.sendCmd('replace', tracks.map(track => track.url));
-    } else if (tracks) {
-      services.wsClient.sendCmd('replace', [tracks.url]);
+  play(arg) {
+    if (isArray(arg)) {
+      services.wsClient.sendCmd('replace', arg.map(track => track.url));
+    } else if (isObject(arg) && 'url' in arg) {
+      services.wsClient.sendCmd('replace', [arg.url]);
     } else {
-      services.wsClient.sendCmd('play');
+      services.wsClient.sendCmd('play', {pos: isInteger(arg) ? arg : 0});
     }
   }
 
@@ -35,7 +36,7 @@ export default class Player extends Events {
   }
 
   remove(index) {
-    services.wsClient.sendCmd('remove', index);
+    services.wsClient.sendCmd('remove', {pos: index});
   }
 
   pause() {
