@@ -42,7 +42,7 @@ describe('Player', function() {
     });
 
     it('triggers event with all fields', function() {
-      services.wsClient.trigger('playlist', [{
+      services.wsClient.trigger('message:playlist', [{
         album: '03d2fc34',
         name: 'track title',
         disc: '2',
@@ -60,13 +60,13 @@ describe('Player', function() {
     });
 
     it('leaves out optional fields', function() {
-      services.wsClient.trigger('playlist', [{name: 'foo'}]);
+      services.wsClient.trigger('message:playlist', [{name: 'foo'}]);
 
       expect(listener).to.have.been.calledWith([{name: 'foo'}]);
     });
 
     it('skips unknown fields', function() {
-      services.wsClient.trigger('playlist', [{name: 'foo', foo: 23}]);
+      services.wsClient.trigger('message:playlist', [{name: 'foo', foo: 23}]);
 
       expect(listener).to.have.been.calledWith([{name: 'foo'}]);
     });

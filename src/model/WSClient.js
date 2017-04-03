@@ -31,6 +31,7 @@ export default class WSClient extends Events {
       this._sendCmd(cmd);
     }
     this._queue = [];
+    this.trigger('connected');
   }
 
   _onError(event) {
@@ -45,7 +46,7 @@ export default class WSClient extends Events {
     if (typeof event.data === 'string') {
       let data = JSON.parse(event.data);
       if (data.topic) {
-        this.trigger(data.topic, data.args);
+        this.trigger('message:' + data.topic, data.args);
       }
     }
   }
