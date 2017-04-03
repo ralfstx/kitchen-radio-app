@@ -14,7 +14,7 @@
     "rollup": "rollup --format=cjs --output=dist/main.js --external tabris,core-js/client/shim.min.js -- src/main.js",
     "mocha": "mocha --compilers js:babel-core/register",
     "lint": "eslint .",
-    "test": "npm run mocha -- 'test/**/*.spec.js'",
+    "test": "npm run mocha -- 'test/**/*.test.js'",
     "posttest": "npm run lint",
     "server": "hs -c-1",
     "start": "npm run dist && npm run server"
