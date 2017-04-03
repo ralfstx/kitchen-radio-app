@@ -23,20 +23,19 @@ export default class StatusView extends Composite {
 
   _init() {
     services.player.on('change:status', () => this._update());
-    services.player.on('change:playlist', () => this._update());
     this._update();
   }
 
   _update() {
-    let {status, playlist} = services.player;
+    let {status} = services.player;
     let icons = {
       play: 'play_arrow',
       pause: 'pause'
     };
     let image = status.state in icons ? getImage(icons[status.state] + '_white_24dp') : null;
     let text = status.state === 'play' || status.state === 'pause' ?
-      (status.song + 1) + ' of ' + playlist.length :
-      playlist.length + ' tracks';
+      (status.track + 1) + ' of ' + status.totalTracks :
+      status.totalTracks + ' tracks';
     this.apply({
       '#statusIcon': {image},
       '#statusText': {text}

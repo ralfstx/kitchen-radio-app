@@ -193,7 +193,7 @@ export default class PlaylistView extends Composite {
   }
 
   _updateStatus(status) {
-    this.playingIndex = status.song;
+    this.playingIndex = status.track;
     this.trigger('change:playingIndex');
     // if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
     //   // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}

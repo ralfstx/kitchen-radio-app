@@ -68,29 +68,17 @@ export default class Player extends Events {
   }
 
   _processStatus(status) {
-    let result = {
-      state: status.state,
-      elapsedTime: parseInt(status.elapsed)
-    };
     if (status.playlist !== this._playlistid) {
       this._playlistid = status.playlist;
       this._updatePlaylist();
     }
-    if (status.songid !== this._songid) {
-      this._songid = status.song;
-      result.song = parseInt(status.song);
-    }
-    if (status.time) {
-      let times = status.time.split(':');
-      let total = parseInt(times[1]);
-      let elapsed = parseInt(times[0]);
-      if (Number.isFinite(total) && Number.isFinite(elapsed)) {
-        result.totalTime = total;
-        result.elapsedTime = elapsed;
-      }
-    }
-    this._status = result;
-    this.trigger('change:status', result);
+    this._status = {
+      state: status.state,
+      track: parseInt(status.song),
+      totalTracks: parseInt(status.playlistlength),
+      elapsedTime: parseInt(status.elapsed || '0'),
+    };
+    this.trigger('change:status', this._status);
   }
 
   _processPlaylist(playlist) {
