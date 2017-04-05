@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "core-js": "^2.2.1",
-    "tabris": "2.0.0-beta2"
+    "tabris": "nightly"
   },
   "devDependencies": {
     "adm-zip": "^0.4.7",
