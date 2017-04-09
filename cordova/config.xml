@@ -9,6 +9,7 @@
   </author>
   <content src="www"/>
   <access origin="*"/>
+  <preference name="EnableDeveloperConsole" value="$IS_DEBUG" />
   <platform name="android">
     <icon src="res/android/radio_48.png" density="mdpi" />
     <icon src="res/android/radio_72.png" density="hdpi" />
