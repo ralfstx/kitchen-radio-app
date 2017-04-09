@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // See https://design.google.com/icons/
-// Usage: download ic_playlist_add_black_24dp.zip
+// Usage: download-image clear_white_24
 
 let fs = require('fs');
 let path = require('path');
@@ -18,7 +18,7 @@ let factors = {
 let args = process.argv.slice(2);
 
 if (!args.length) {
-  console.error('Usage: download-image <name_color_dp>');
+  console.error('Usage: download-image <name_color_dp>\n  Example: download-image clear_white_24');
 }
 
 args.forEach(arg => {

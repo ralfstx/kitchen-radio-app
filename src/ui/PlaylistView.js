@@ -3,7 +3,6 @@ import {formatTime} from '../model/helpers';
 import {Cell, Composite, TextView, CollectionView, ImageView, app} from 'tabris';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
-import {enableSwipe} from './swipe-to-dismiss';
 
 const CELL_BG = '#fff';
 const CELL_SELECTED_BG = '#eee';
@@ -67,7 +66,7 @@ class ItemViewOverlay extends Composite {
     new Composite({
       left: 0, top: 0, bottom: 0, right:0,
       background: 'white',
-      opacity: 0.5
+      opacity: 0.75
     }).appendTo(this);
     new ImageView({
       left: 2, top: 1, bottom: 1, width: 50,
@@ -76,6 +75,14 @@ class ItemViewOverlay extends Composite {
       image: getImage('play_arrow_white_24dp')
     }).on('tap', () => {
       this.trigger('!play');
+    }).appendTo(this);
+    new ImageView({
+      right: 2, top: 1, bottom: 1, width: 50,
+      tintColor: 'black',
+      scaleMode: 'fill',
+      image: getImage('clear_white_24dp')
+    }).on('tap', () => {
+      this.trigger('!remove');
     }).appendTo(this);
     this.on('tap', () => this.hide());
     this.show();
@@ -122,9 +129,7 @@ export default class PlaylistView extends Composite {
         let itemView = new ItemView({
           left: 0, top: 0, right: 0, bottom: 0
         }).appendTo(cell);
-        enableSwipe(itemView);
         itemView.on('tap', () => this._showOverlay(cell));
-        itemView.on('dismiss', () => services.player.remove(cell.itemIndex));
         cell.on('change:item', ({value: item}) => itemView.item = item);
         cell.on('change:itemIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
         this.on('change:playingIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
@@ -184,6 +189,9 @@ export default class PlaylistView extends Composite {
       left: 0, right: 0, top, height
     }).on('!play', () => {
       services.player.play(cell.itemIndex);
+      overlay.hide();
+    }).on('!remove', () => {
+      services.player.remove(cell.itemIndex);
       overlay.hide();
     }).appendTo(this);
   }
