@@ -2,14 +2,91 @@ import services from '../model/services';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 import {formatTime} from '../model/helpers';
-import {Cell, Composite, TextView, ImageView, CollectionView, app} from 'tabris';
+import {Composite, TextView, ImageView, CollectionView, app} from 'tabris';
 import SelectableView from './SelectableView';
 
-class AlbumCell extends Cell {
+export default class AlbumScreen extends Composite {
+
+  constructor(properties) {
+    super(Object.assign({background: 'white'}, properties));
+    this.on('boundsChanged', () => {
+      this.layout();
+    });
+    let coverSize = Math.min(screen.width, screen.height);
+    this._trackListView = new CollectionView({
+      background: '#323246',
+      cellHeight: index => this._items[index].type === 'album' ? coverSize : 50,
+      cellType: index => this._items[index].type,
+      createCell: (type) => {
+        if (type === 'album') {
+          return new AlbumCell();
+        }
+        if (type === 'track') {
+          return new TrackCell();
+        }
+        return new SectionCell();
+      },
+      updateCell: (cell, index) => cell.item = this._items[index]
+    }).appendTo(this);
+    this._listenOnBackNavigation();
+  }
+
+  set album(album) {
+    this._album = album;
+    this.update();
+  }
+
+  get album() {
+    return this._album || null;
+  }
+
+  update() {
+    this.title = this._album.name || 'unknown album';
+    this._items = getItems(this._album);
+    this._trackListView.itemCount = this._items.length;
+  }
+
+  layout() {
+    let bounds = this.bounds;
+    if (bounds.width > bounds.height) {
+      // landscape
+      this._trackListView.layoutData = {left: 0, top: 0, bottom: 0, right: 0};
+    } else {
+       // portrait
+      this._trackListView.layoutData = {left: 0, top: 0, right: 0, bottom: 0};
+    }
+  }
+
+  close() {
+    this.animate({
+      transform: {translationY: this.bounds.height}
+    }, {
+      duration: 150,
+      easing: 'ease-out'
+    }).then(() => this.dispose());
+  }
+
+  _listenOnBackNavigation() {
+    let listener = (event) => {
+      event.preventDefault();
+      this.close();
+    };
+    app.on('backNavigation', listener);
+    this.on('dispose', () => app.off('backNavigation', listener));
+  }
+
+}
+
+class AlbumCell extends Composite {
 
   constructor(properties) {
     super(properties);
-    let coverView = new ImageView({
+    this._createUI();
+  }
+
+  _createUI() {
+    new ImageView({
+      id: 'coverView',
       left: 0, right: 0, top: 0, bottom: 0,
       scaleMode: 'fit'
     }).appendTo(this);
@@ -29,20 +106,42 @@ class AlbumCell extends Cell {
     }).on('tap', () => {
       services.player.append(this._getTracks());
     }).appendTo(this);
-    this.on('itemChanged', ({value: album}) => {
-      coverView.image = {src: getCoverUrl(album), width: 250, height: 250};
-    });
+  }
+
+  set item(album) {
+    this._album = album;
+    this.find('#coverView').set({image: {src: getCoverUrl(album), width: 250, height: 250}});
   }
 
   _getTracks() {
-    let album = this.item;
-    let selected = album.tracks.filter(track => track.selected);
-    return selected.length ? selected : album.tracks;
+    let selected = this._album.tracks.filter(track => track.selected);
+    return selected.length ? selected : this._album.tracks;
   }
 
 }
 
-class TrackView extends SelectableView {
+class SectionCell extends Composite {
+
+  constructor(properties) {
+    super(properties);
+    this._createUI();
+  }
+
+  _createUI() {
+    new TextView({
+      id: 'textView',
+      left: 45, right: 85, top: 5, bottom: 5,
+      font: 'bold 18px sans-serif'
+    }).appendTo(this);
+  }
+
+  set item(disc) {
+    this.find('#textView').set({text: 'Disc ' + disc.number});
+  }
+
+}
+
+class TrackCell extends SelectableView {
 
   constructor(properties) {
     super(Object.assign({
@@ -73,8 +172,8 @@ class TrackView extends SelectableView {
     }).appendTo(this);
   }
 
-  set track(track) {
-    this._track = track;
+  set item(track) {
+    this._item = track;
     this.selected = !!track.selected;
     this.apply({
       '#numberView': {text: track.number},
@@ -83,110 +182,8 @@ class TrackView extends SelectableView {
     });
   }
 
-  get track() {
-    return this._track || null;
-  }
-
-}
-
-class TrackCell extends Cell {
-
-  constructor(properties) {
-    super(Object.assign({
-      background: '#323246'
-    }, properties));
-    this._createUI();
-  }
-
-  _createUI() {
-    let view = new TrackView({
-      left: 0, right: 0, top: 0, bottom: 0
-    }).appendTo(this);
-    this.on('itemChanged', ({value: track}) => view.track = track);
-  }
-
-}
-
-class SectionCell extends Cell {
-
-  constructor(properties) {
-    super(properties);
-    let textView = new TextView({
-      left: 45, right: 85, top: 5, bottom: 5,
-      font: 'bold 18px sans-serif'
-    }).appendTo(this);
-    this.on('itemChanged', ({value: disc}) => {
-      textView.text = 'Disc ' + disc.number;
-    });
-  }
-
-}
-
-export default class AlbumScreen extends Composite {
-
-  constructor(properties) {
-    super(Object.assign({background: 'white'}, properties));
-    this.on('boundsChanged', () => {
-      this.layout();
-    });
-    let coverSize = Math.min(screen.width, screen.height);
-    this._trackListView = new CollectionView({
-      itemHeight: item => item.type === 'album' ? coverSize : 50,
-      cellType: item => item.type,
-      createCell: (type) => {
-        if (type === 'album') {
-          return new AlbumCell();
-        }
-        if (type === 'track') {
-          return new TrackCell();
-        }
-        return new SectionCell();
-      }
-    }).appendTo(this);
-    this._listenOnBackNavigation();
-  }
-
-  set album(album) {
-    this._album = album;
-    this.update();
-  }
-
-  get album() {
-    return this._album || null;
-  }
-
-  update() {
-    this.title = this._album.name || 'unknown album';
-    this._trackListView.items = getItems(this._album);
-  }
-
-  layout() {
-    let bounds = this.bounds;
-    if (bounds.width > bounds.height) {
-      // landscape
-      this._trackListView.layoutData = {left: 0, top: 0, bottom: 0, right: 0};
-    } else {
-       // portrait
-      this._trackListView.layoutData = {left: 0, top: 0, right: 0, bottom: 0};
-    }
-  }
-
-  close() {
-    this.animate({
-      transform: {translationY: this.bounds.height}
-    }, {
-      duration: 150,
-      easing: 'ease-out'
-    }).then(() => this.dispose());
-  }
-
-  _listenOnBackNavigation() {
-    let listener = (event) => {
-      event.preventDefault();
-      this.close();
-    };
-    app.on('backNavigation', listener);
-    this.on('dispose', () => app.off('backNavigation', listener));
+  get item() {
+    return this._item || null;
   }
 
 }

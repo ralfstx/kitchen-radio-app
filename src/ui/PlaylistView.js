@@ -1,18 +1,119 @@
 import services from '../model/services';
 import {formatTime} from '../model/helpers';
-import {Cell, Composite, TextView, CollectionView, ImageView, app} from 'tabris';
+import {Composite, TextView, CollectionView, ImageView, app} from 'tabris';
 import {getCoverUrl} from '../model/server';
 import {getImage} from '../model/images';
 
 const CELL_BG = '#fff';
 const CELL_SELECTED_BG = '#eee';
 
-class ItemView extends Composite {
+export default class PlaylistView extends Composite {
 
   constructor(properties) {
-    super(Object.assign(properties, {
+    super(Object.assign({
+      background: 'white'
+    }, properties));
+    this._createUI();
+    this._listenOnBackNavigation();
+    this._init();
+  }
+
+  _createUI() {
+    this._playlistView = new CollectionView({
+      left: 0, right: 0, top: ['prev()', 5], bottom: 0,
+      cellHeight: 52,
+      createCell: () => new PlaylistCell().on('tap', ({target}) => this._showOverlay(target)),
+      updateCell: (cell, index) => {
+        cell.item = this._items[index];
+        cell.playing = this.playingIndex === index;
+      }
+    }).on({
+      scroll: () => this._hideOverlays()
+    }).appendTo(this);
+  }
+
+  show() {
+    if (this._animating) return;
+    this._animating = true;
+    this.animate({
+      transform: {}
+    }, {
+      duration: 150,
+      easing: 'ease-out'
+    }).then(() => {
+      delete this._animating;
+    });
+  }
+
+  hide() {
+    if (this._animating) return;
+    this._animating = true;
+    this.animate({
+      transform: {translationY: this.bounds.height}
+    }, {
+      duration: 150,
+      easing: 'ease-out'
+    }).then(() => {
+      delete this._animating;
+    });
+  }
+
+  _listenOnBackNavigation() {
+    let listener = (event) => {
+      event.preventDefault();
+      this.hide();
+    };
+    app.on('backNavigation', listener);
+    this.on('dispose', () => app.off('backNavigation', listener));
+  }
+
+  _init() {
+    services.player.on('statusChanged', (status) => this._updateStatus(status));
+    services.player.on('playlistChanged', (playlist) => this._updatePlaylist(playlist));
+    this._updatePlaylist(services.player.playlist);
+    this._updateStatus(services.player.status);
+  }
+
+  _showOverlay(cell) {
+    this._hideOverlays();
+    let {top, height} = cell.bounds;
+    top += this._playlistView.bounds.top;
+    let overlay = new ItemViewOverlay({
+      left: 0, right: 0, top, height
+    }).on('!play', () => {
+      services.player.play(this._items.indexOf(cell.item));
+      overlay.hide();
+    }).on('!remove', () => {
+      services.player.remove(this._items.indexOf(cell.item));
+      overlay.hide();
+    }).appendTo(this);
+  }
+
+  _hideOverlays() {
+    this.find('ItemViewOverlay').forEach(overlay => overlay.hide());
+  }
+
+  _updateStatus(status) {
+    this.playingIndex = status.track;
+    this.trigger('playingIndexChanged');
+    // if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
+    //   // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
+    // }
+  }
+
+  _updatePlaylist(playlist) {
+    this._items = playlist;
+    this._playlistView.itemCount = playlist.length;
+  }
+
+}
+
+class PlaylistCell extends Composite {
+
+  constructor(properties) {
+    super(Object.assign({
       background: CELL_BG
-    }));
+    }, properties));
     this._createUI();
   }
 
@@ -104,112 +205,6 @@ class ItemViewOverlay extends Composite {
     }, {
       duration: 200
     }).then(() => this.dispose());
-  }
-
-}
-
-export default class PlaylistView extends Composite {
-
-  constructor(properties) {
-    super(Object.assign({
-      background: 'white'
-    }, properties));
-    this._createUI();
-    this._listenOnBackNavigation();
-    this._init();
-  }
-
-  _createUI() {
-    this._playlistView = new CollectionView({
-      left: 0, right: 0, top: ['prev()', 5], bottom: 0,
-      itemHeight: 52,
-      createCell: () => {
-        let cell = new Cell();
-        cell.background = '#900000';
-        let itemView = new ItemView({
-          left: 0, top: 0, right: 0, bottom: 0
-        }).appendTo(cell);
-        itemView.on('tap', () => this._showOverlay(cell));
-        cell.on('itemChanged', ({value: item}) => itemView.item = item);
-        cell.on('itemIndexChanged', () => itemView.playing = this.playingIndex === cell.itemIndex);
-        this.on('playingIndexChanged', () => itemView.playing = this.playingIndex === cell.itemIndex);
-        return cell;
-      }
-    }).appendTo(this);
-    this._playlistView.on('scroll', () => this._hideOverlays());
-  }
-
-  show() {
-    if (this._animating) return;
-    this._animating = true;
-    this.animate({
-      transform: {}
-    }, {
-      duration: 150,
-      easing: 'ease-out'
-    }).then(() => {
-      delete this._animating;
-    });
-  }
-
-  hide() {
-    if (this._animating) return;
-    this._animating = true;
-    this.animate({
-      transform: {translationY: this.bounds.height}
-    }, {
-      duration: 150,
-      easing: 'ease-out'
-    }).then(() => {
-      delete this._animating;
-    });
-  }
-
-  _listenOnBackNavigation() {
-    let listener = (event) => {
-      event.preventDefault();
-      this.hide();
-    };
-    app.on('backNavigation', listener);
-    this.on('dispose', () => app.off('backNavigation', listener));
-  }
-
-  _init() {
-    services.player.on('statusChanged', (status) => this._updateStatus(status));
-    services.player.on('playlistChanged', (playlist) => this._updatePlaylist(playlist));
-    this._updatePlaylist(services.player.playlist);
-    this._updateStatus(services.player.status);
-  }
-
-  _showOverlay(cell) {
-    this._hideOverlays();
-    let {top, height} = cell.bounds;
-    top += this._playlistView.bounds.top;
-    let overlay = new ItemViewOverlay({
-      left: 0, right: 0, top, height
-    }).on('!play', () => {
-      services.player.play(cell.itemIndex);
-      overlay.hide();
-    }).on('!remove', () => {
-      services.player.remove(cell.itemIndex);
-      overlay.hide();
-    }).appendTo(this);
-  }
-
-  _hideOverlays() {
-    this.find('ItemViewOverlay').forEach(overlay => overlay.hide());
-  }
-
-  _updateStatus(status) {
-    this.playingIndex = status.track;
-    this.trigger('playingIndexChanged');
-    // if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
-    //   // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
-    // }
-  }
-
-  _updatePlaylist(playlist) {
-    this._playlistView.items = playlist;
   }
 
 }
