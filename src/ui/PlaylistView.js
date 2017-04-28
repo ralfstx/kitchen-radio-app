@@ -33,7 +33,7 @@ export default class PlaylistView extends Composite {
   }
 
   show() {
-    if (this._animating) return;
+    if (!this._hidden || this._animating) return;
     this._animating = true;
     this.animate({
       transform: {}
@@ -41,12 +41,13 @@ export default class PlaylistView extends Composite {
       duration: 150,
       easing: 'ease-out'
     }).then(() => {
+      delete this._hidden;
       delete this._animating;
     });
   }
 
   hide() {
-    if (this._animating) return;
+    if (this._hidden || this._animating) return;
     this._animating = true;
     this.animate({
       transform: {translationY: this.bounds.height}
@@ -54,8 +55,13 @@ export default class PlaylistView extends Composite {
       duration: 150,
       easing: 'ease-out'
     }).then(() => {
+      this._hidden = true;
       delete this._animating;
     });
+  }
+
+  toggle() {
+    this._hidden ? this.show() : this.hide();
   }
 
   _listenOnBackNavigation() {

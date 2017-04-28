@@ -17,7 +17,7 @@ export default class StatusView extends Composite {
       top: 2, bottom: 2, left: 52, right: 52,
       textColor: 'white'
     }).appendTo(this);
-    this.on('tap', () => services.ui.showPlaylist());
+    this.on('tap', () => services.ui.playlistView.toggle());
     this._init();
   }
 

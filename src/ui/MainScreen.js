@@ -7,6 +7,7 @@ import PlaylistView from './PlaylistView';
 import StatusView from './StatusView';
 import {loadAlbum} from '../model/server';
 
+const STATUS_VIEW_HEIGHT = 32;
 
 export default class MainScreen extends Composite {
 
@@ -17,7 +18,7 @@ export default class MainScreen extends Composite {
 
   _createUI() {
     new TabFolder({
-      left: 0, top: 0, right: 0, bottom: 32,
+      left: 0, top: 0, right: 0, bottom: STATUS_VIEW_HEIGHT,
       paging: !isIOS(),
       background: RED_BACKGROUND,
       textColor: 'white',
@@ -30,25 +31,25 @@ export default class MainScreen extends Composite {
       new AlbumsTab(),
       new StationsTab()
     ]).appendTo(this);
-    new StatusView({
-      left: 0, right: 0, bottom: 0, height: 32,
-      elevation: 8,
-    }).appendTo(this);
     new PlaylistView({
-      left: 0, right: 0, bottom: 0, top: 0,
-      elevation: 12,
+      left: 0, top: 0, right: 0, bottom: STATUS_VIEW_HEIGHT,
+      elevation: 8,
     }).on('resize', ({target}) => target.transform = {translationY: target.bounds.height}).appendTo(this);
+    new StatusView({
+      left: 0, right: 0, bottom: 0, height: STATUS_VIEW_HEIGHT,
+      elevation: 12,
+    }).appendTo(this);
   }
 
   showAlbum(albumId) {
     if (!albumId) {
       return;
     }
-    this.find('PlaylistView').forEach(view => view.hide());
+    this.playlistView.hide();
     let albumsTab = this.find('AlbumsTab').first();
     this.find('TabFolder').set('selection', albumsTab);
     let albumScreen = new AlbumScreen({
-      left: 0, top: 0, right: 0, bottom: 32,
+      left: 0, top: 0, right: 0, bottom: STATUS_VIEW_HEIGHT,
       transform: {translationY: albumsTab.bounds.height},
       opacity: 0
     }).appendTo(this);
@@ -62,8 +63,8 @@ export default class MainScreen extends Composite {
     loadAlbum(albumId).then(album => albumScreen.album = album);
   }
 
-  showPlaylist() {
-    this.find('PlaylistView').forEach(view => view.show());
+  get playlistView() {
+    return this.find('PlaylistView').first();
   }
 
 }
