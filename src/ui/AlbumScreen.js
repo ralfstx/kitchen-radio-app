@@ -8,13 +8,14 @@ import SelectableView from './SelectableView';
 export default class AlbumScreen extends Composite {
 
   constructor(properties) {
-    super(Object.assign({background: 'white'}, properties));
-    this.on('boundsChanged', () => {
-      this.layout();
+    super(Object.assign({
+      background: 'white'
+    }, properties));
+    this.on({
+      boundsChanged: () => this.layout()
     });
     let coverSize = Math.min(screen.width, screen.height);
     this._trackListView = new CollectionView({
-      background: '#323246',
       cellHeight: index => this._items[index].type === 'album' ? coverSize : 50,
       cellType: index => this._items[index].type,
       createCell: (type) => {
@@ -80,7 +81,9 @@ export default class AlbumScreen extends Composite {
 class AlbumCell extends Composite {
 
   constructor(properties) {
-    super(properties);
+    super(Object.assign({
+      background: 'gray'
+    }, properties));
     this._createUI();
   }
 
@@ -88,24 +91,28 @@ class AlbumCell extends Composite {
     new ImageView({
       id: 'coverView',
       left: 0, right: 0, top: 0, bottom: 0,
-      scaleMode: 'fit'
+      scaleMode: 'fill'
     }).appendTo(this);
     new ImageView({
       right: 125, bottom: 50, width: 50, height: 50, cornerRadius: 25,
       elevation: 4,
       background: '#323246',
       image: getImage('play_arrow_white_36dp')
-    }).on('tap', () => {
-      services.player.play(this._getTracks());
+    }).on({
+      tap: () => services.player.play(this._getTracks())
     }).appendTo(this);
     new ImageView({
       right: 50, bottom: 50, width: 50, height: 50, cornerRadius: 25,
       elevation: 4,
       background: '#323246',
       image: getImage('playlist_add_white_36dp')
-    }).on('tap', () => {
-      services.player.append(this._getTracks());
+    }).on({
+      tap: () => services.player.append(this._getTracks())
     }).appendTo(this);
+    this.on({
+      tap: detectDoubleTap,
+      doubleTap: () => this._toggleTracks()
+    });
   }
 
   set item(album) {
@@ -116,6 +123,11 @@ class AlbumCell extends Composite {
   _getTracks() {
     let selected = this._album.tracks.filter(track => track.selected);
     return selected.length ? selected : this._album.tracks;
+  }
+
+  _toggleTracks() {
+    this._album.tracks.forEach(track => track.selected = !track.selected);
+    this.parent().refresh();
   }
 
 }
@@ -133,49 +145,65 @@ class SectionCell extends Composite {
       left: 45, right: 85, top: 5, bottom: 5,
       font: 'bold 18px sans-serif'
     }).appendTo(this);
+    this.on({
+      tap: detectDoubleTap,
+      doubleTap: () => this._toggleTracks()
+    });
   }
 
   set item(disc) {
+    this._disc = disc;
     this.find('#textView').set({text: 'Disc ' + disc.number});
+  }
+
+  _toggleTracks() {
+    this._disc.tracks.forEach(track => track.selected = !track.selected);
+    this.parent().refresh();
   }
 
 }
 
-class TrackCell extends SelectableView {
+class TrackCell extends Composite {
 
   constructor(properties) {
     super(Object.assign({
-      background: 'white'
+      background: '#323246',
     }, properties));
     this._createUI();
-    this.on('selectedChanged', () => this.track ? this.track.selected = this.selected : null);
   }
 
   _createUI() {
+    let container = new SelectableView({
+      id: 'selectableView',
+      left: 0, top: 0, right: 0, bottom: 0,
+      background: 'white'
+    }).on({
+      selectedChanged: ({value: selected}) => this._track ? this._track.selected = selected : null
+    }).appendTo(this);
     new TextView({
       id: 'numberView',
       left: 8, width: 32, top: 4, bottom: 4,
       alignment: 'right',
       opacity: 0.25,
       font: '16px sans-serif'
-    }).appendTo(this);
+    }).appendTo(container);
     new TextView({
       id: 'titleView',
       left: 48, right: 84, top: 4, bottom: 4,
       font: '16px sans-serif'
-    }).appendTo(this);
+    }).appendTo(container);
     new TextView({
       id: 'timeView',
       right: 16, width: 72, top: 4, bottom: 4,
       alignment: 'right',
       font: '16px sans-serif'
-    }).appendTo(this);
+    }).appendTo(container);
   }
 
   set item(track) {
-    this._item = track;
-    this.selected = !!track.selected;
+    this._track = track;
     this.apply({
+      '#selectableView': {selected: !!track.selected},
       '#numberView': {text: track.number},
       '#titleView': {text: track.title},
       '#timeView': {text: formatTime(track.length)},
@@ -183,7 +211,7 @@ class TrackCell extends SelectableView {
   }
 
   get item() {
-    return this._item || null;
+    return this._track || null;
   }
 
 }
@@ -203,4 +231,11 @@ function getItems(album) {
     });
   });
   return items;
+}
+
+function detectDoubleTap({target, timeStamp}) {
+  if (timeStamp - target._lastTap < 350) {
+    target.trigger('doubleTap');
+  }
+  target._lastTap = timeStamp;
 }

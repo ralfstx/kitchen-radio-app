@@ -18,7 +18,7 @@ export default class SelectableView extends Composite {
   }
 
   get selected() {
-    return this._selected;
+    return !!this._selected;
   }
 
 }
