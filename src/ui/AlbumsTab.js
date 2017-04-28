@@ -61,7 +61,7 @@ export default class AlbumsTab extends Tab {
       refreshEnabled: true,
       initializeCell: cell => {
         let view = new AlbumView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
-        cell.on('change:item', ({value: item}) => {
+        cell.on('itemChanged', ({value: item}) => {
           view.album = item;
         });
       }
@@ -76,7 +76,7 @@ export default class AlbumsTab extends Tab {
       this._albumsList.columnCount = columns;
       this._albumsList.itemHeight = size;
     });
-    settings.on('change:serverUrl', () => {
+    settings.on('serverUrlChanged', () => {
       this.load(true);
     });
     // TODO load on appear when this exists on a Tab

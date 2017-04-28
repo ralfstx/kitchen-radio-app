@@ -22,7 +22,7 @@ export default class StatusView extends Composite {
   }
 
   _init() {
-    services.player.on('change:status', () => this._update());
+    services.player.on('statusChanged', () => this._update());
     this._update();
   }
 

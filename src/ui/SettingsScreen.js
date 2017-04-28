@@ -43,8 +43,8 @@ export default class SettingsScreen extends Composite {
       event.preventDefault();
       this.close();
     };
-    app.on('backnavigation', listener);
-    this.on('dispose', () => app.off('backnavigation', listener));
+    app.on('backNavigation', listener);
+    this.on('dispose', () => app.off('backNavigation', listener));
   }
 
   close() {

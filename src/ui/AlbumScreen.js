@@ -29,7 +29,7 @@ class AlbumCell extends Cell {
     }).on('tap', () => {
       services.player.append(this._getTracks());
     }).appendTo(this);
-    this.on('change:item', ({value: album}) => {
+    this.on('itemChanged', ({value: album}) => {
       coverView.image = {src: getCoverUrl(album), width: 250, height: 250};
     });
   }
@@ -49,7 +49,7 @@ class TrackView extends SelectableView {
       background: 'white'
     }, properties));
     this._createUI();
-    this.on('change:selected', () => this.track ? this.track.selected = this.selected : null);
+    this.on('selectedChanged', () => this.track ? this.track.selected = this.selected : null);
   }
 
   _createUI() {
@@ -102,7 +102,7 @@ class TrackCell extends Cell {
     let view = new TrackView({
       left: 0, right: 0, top: 0, bottom: 0
     }).appendTo(this);
-    this.on('change:item', ({value: track}) => view.track = track);
+    this.on('itemChanged', ({value: track}) => view.track = track);
   }
 
 }
@@ -115,7 +115,7 @@ class SectionCell extends Cell {
       left: 45, right: 85, top: 5, bottom: 5,
       font: 'bold 18px sans-serif'
     }).appendTo(this);
-    this.on('change:item', ({value: disc}) => {
+    this.on('itemChanged', ({value: disc}) => {
       textView.text = 'Disc ' + disc.number;
     });
   }
@@ -126,7 +126,7 @@ export default class AlbumScreen extends Composite {
 
   constructor(properties) {
     super(Object.assign({background: 'white'}, properties));
-    this.on('change:bounds', () => {
+    this.on('boundsChanged', () => {
       this.layout();
     });
     let coverSize = Math.min(screen.width, screen.height);
@@ -185,8 +185,8 @@ export default class AlbumScreen extends Composite {
       event.preventDefault();
       this.close();
     };
-    app.on('backnavigation', listener);
-    this.on('dispose', () => app.off('backnavigation', listener));
+    app.on('backNavigation', listener);
+    this.on('dispose', () => app.off('backNavigation', listener));
   }
 
 }

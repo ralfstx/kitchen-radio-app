@@ -38,7 +38,7 @@ describe('Player', function() {
 
     beforeEach(function() {
       listener = spy();
-      player.on('change:playlist', listener);
+      player.on('playlistChanged', listener);
     });
 
     it('triggers event with all fields', function() {

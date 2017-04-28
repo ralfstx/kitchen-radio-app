@@ -6,13 +6,13 @@ export default class SelectableView extends Composite {
 
   constructor(properties) {
     super(properties);
-    this.on('pan:horizontal', handlePan);
+    this.on('panHorizontal', handlePan);
   }
 
   set selected(selected) {
     if (!!selected !== this.selected) {
       this._selected = !!selected;
-      this._trigger('change:selected', {value: this._selected});
+      this._trigger('selectedChanged', {value: this._selected});
       this.transform = this._selected ? {translationX: indent} : {};
     }
   }

@@ -22,7 +22,7 @@ export default class MainScreen extends Composite {
       background: RED_BACKGROUND,
       textColor: 'white',
       elevation: 2
-    }).on('change:selection', ({value: tab}) => {
+    }).on('selectionChanged', ({value: tab}) => {
       if (tab.load) {
         tab.load();
       }

@@ -79,12 +79,12 @@ export default class Player extends Events {
       totalTracks: parseInt(status.playlistlength),
       elapsedTime: parseInt(status.elapsed || '0'),
     };
-    this.trigger('change:status', this._status);
+    this.trigger('statusChanged', this._status);
   }
 
   _processPlaylist(playlist) {
     this._playlist = playlist.map(processPlaylistItem);
-    this.trigger('change:playlist', this._playlist);
+    this.trigger('playlistChanged', this._playlist);
   }
 
 }

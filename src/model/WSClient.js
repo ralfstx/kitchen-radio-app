@@ -9,7 +9,7 @@ export default class WSClient extends Events {
   constructor() {
     super();
     this._queue = [];
-    settings.on('change:serverUrl', () => this._connect());
+    settings.on('serverUrlChanged', () => this._connect());
     this._connect();
   }
 

@@ -12,7 +12,7 @@ class Settings extends Events {
   set serverUrl(url) {
     store.serverUrl = url;
     localStorage.setItem('serverUrl', url);
-    this.trigger('change:serverUrl');
+    this.trigger('serverUrlChanged');
   }
 
   load() {

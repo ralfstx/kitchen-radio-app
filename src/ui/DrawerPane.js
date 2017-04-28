@@ -58,7 +58,7 @@ export default class DrawerPane extends Composite {
       .addButton('refresh', () => services.player.update())
       .appendTo(this);
 
-    services.player.on('change:status', (status) => {
+    services.player.on('statusChanged', (status) => {
       this._updateStatus(status);
     });
   }

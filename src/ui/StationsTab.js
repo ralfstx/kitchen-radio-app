@@ -51,7 +51,7 @@ export default class StationsTab extends Tab {
       refreshEnabled: true,
       initializeCell: cell => {
         let view = new StationView({left: 1, top: 1, right: 1, bottom: 1}).appendTo(cell);
-        cell.on('change:item', ({value: item}) => {
+        cell.on('itemChanged', ({value: item}) => {
           view.station = item;
         });
       }
@@ -66,7 +66,7 @@ export default class StationsTab extends Tab {
       this._stationsList.columnCount = columns;
       this._stationsList.itemHeight = size;
     });
-    settings.on('change:serverUrl', () => {
+    settings.on('serverUrlChanged', () => {
       this.load(true);
     });
   }

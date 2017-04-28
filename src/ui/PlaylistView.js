@@ -130,9 +130,9 @@ export default class PlaylistView extends Composite {
           left: 0, top: 0, right: 0, bottom: 0
         }).appendTo(cell);
         itemView.on('tap', () => this._showOverlay(cell));
-        cell.on('change:item', ({value: item}) => itemView.item = item);
-        cell.on('change:itemIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
-        this.on('change:playingIndex', () => itemView.playing = this.playingIndex === cell.itemIndex);
+        cell.on('itemChanged', ({value: item}) => itemView.item = item);
+        cell.on('itemIndexChanged', () => itemView.playing = this.playingIndex === cell.itemIndex);
+        this.on('playingIndexChanged', () => itemView.playing = this.playingIndex === cell.itemIndex);
         return cell;
       }
     }).appendTo(this);
@@ -170,13 +170,13 @@ export default class PlaylistView extends Composite {
       event.preventDefault();
       this.hide();
     };
-    app.on('backnavigation', listener);
-    this.on('dispose', () => app.off('backnavigation', listener));
+    app.on('backNavigation', listener);
+    this.on('dispose', () => app.off('backNavigation', listener));
   }
 
   _init() {
-    services.player.on('change:status', (status) => this._updateStatus(status));
-    services.player.on('change:playlist', (playlist) => this._updatePlaylist(playlist));
+    services.player.on('statusChanged', (status) => this._updateStatus(status));
+    services.player.on('playlistChanged', (playlist) => this._updatePlaylist(playlist));
     this._updatePlaylist(services.player.playlist);
     this._updateStatus(services.player.status);
   }
@@ -202,7 +202,7 @@ export default class PlaylistView extends Composite {
 
   _updateStatus(status) {
     this.playingIndex = status.track;
-    this.trigger('change:playingIndex');
+    this.trigger('playingIndexChanged');
     // if (Number.isFinite(status.totalTime) && Number.isFinite(status.elapsedTime)) {
     //   // TODO: update progress view {maximum: status.totalTime, selection: status.elapsedTime}
     // }
