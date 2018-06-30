@@ -75,12 +75,10 @@ class AlbumCell extends Composite {
     super(Object.assign({
       background: '#eee'
     }, properties));
-    new TextView({
-      id: 'text',
+    this._textView = new TextView({
       left: 5, top: 5, right: 5, bottom: 5
     }).appendTo(this);
-    new ImageView({
-      id: 'image',
+    this._imageView = new ImageView({
       left: 0, top: 0, right: 0, bottom: 0,
       scaleMode: 'fill'
     }).appendTo(this);
@@ -92,8 +90,8 @@ class AlbumCell extends Composite {
   }
 
   set album(album) {
-    this.find('#text').set('text', album ? album.name : '');
-    this.find('#image').set('image', album ? {src: getCoverUrl(album, 250), width: 250, height: 250} : null);
+    this._textView.set('text', album ? album.name : '');
+    this._imageView.set('image', album ? {src: getCoverUrl(album, 250), width: 250, height: 250} : null);
     this._album = album;
   }
 

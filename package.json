@@ -20,19 +20,18 @@
     "start": "npm run dist && npm run server"
   },
   "dependencies": {
-    "core-js": "^2.2.1",
-    "tabris": "nightly"
+    "tabris": "2.5.1"
   },
   "devDependencies": {
-    "adm-zip": "^0.4.7",
-    "babel-core": "^6.14.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.23.0",
-    "chai": "^3.5.0",
-    "eslint": "^3.4.0",
-    "fetch-mock": "^5.1.1",
-    "mocha": "^3.2.0",
-    "rollup": "^0.41.4",
-    "sinon": "^1.17.3",
-    "sinon-chai": "^2.8.0"
+    "adm-zip": "^0.4.11",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "chai": "^4.1.2",
+    "eslint": "^5.0.1",
+    "fetch-mock": "^6.4.4",
+    "mocha": "^5.2.0",
+    "rollup": "0.62.0",
+    "sinon": "^6.0.1",
+    "sinon-chai": "^3.2.0"
   }
 }

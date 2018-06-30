@@ -1,4 +1,3 @@
-import 'core-js/client/shim.min.js';
 import {ui} from 'tabris';
 
 import services from './model/services';
